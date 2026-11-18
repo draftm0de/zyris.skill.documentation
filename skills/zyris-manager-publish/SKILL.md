@@ -1,6 +1,6 @@
 ---
 name: zyris-manager-publish
-description: Prepare a plugin publication, propose version and commit message, request explicit approval, then commit, push, open and merge a checked PR, tag, release and promote the catalog with resumable evidence. Never publish during preparation.
+description: Prepare a reviewed diff and commit message, obtain approval, then commit, push, open and merge a checked GitHub PR with resumable evidence. No tags, releases or version proposal. Never publish during preparation.
 ---
 
 # Publish a plugin

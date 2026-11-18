@@ -1,34 +1,19 @@
-# Publish a plugin
+# Publish with approval
 
-## Requirements
+## Prepare
 
-Provide an accessible plugin repository, authenticated GitHub tools in the host and a resolved catalog destination. Local paths must actually be available in a cloud session. GitLab publication is not integrated yet.
+Ask the Manager to prepare publication for this repository. It reviews changes and destination, proposes a commit message, and prepares PR text, explicit files and checks. No commit, push or PR occurs before approval. A changelog can record dated changes but is not mandatory.
 
-## Request a proposal
+## Approve
 
-In Claude: `/zyris-skill-manager:publish PATH`. In Codex: “Use ZYRIS Skill Manager to prepare publication of this plugin.”
+Review the diff, message, repository, branch and merge method. An example request is: “May I commit these changes with the shown message, push to the specified branch, create the PR and merge after passing checks and required reviews?” This is an example, not a current approval request. Partial approval permits only the named steps.
 
-The Manager reviews changes, proposes a version, prepares CHANGELOG.md, the commit message and PR text, validates packages/documentation, then shows the files and destinations. No commits, pushes, PRs or releases occur during preparation.
+## Execute and resume
 
-## Approve the whole proposal
-
-For example:
-
-> Proposed version: 0.2.0. Commit: “feat: add example capability”.
-> Shall I commit and push these changes, create the PR, merge after successful checks, then publish the tag, release and specified catalog?
-
-This is a fictional example, not a current publication request. Request changes to the version/messages or decline. Only explicit approval covering the entire listed workflow allows publication. Approval of a commit alone does not imply approval of merge/release.
-
-## After approval
-
-The Manager executes the steps, waits for checks/reviews and reports progress. Repository protections remain in force. No manual tag or release Action is needed; ordinary validation CI can continue.
-
-## Stop and resume
-
-You can stop at any time. Completed public actions are not automatically undone. A private journal outside the installation and source repositories records progress. Supply that journal and the original request when resuming; the Manager verifies actual remote state first. Changed content needs renewed approval. No unattended background publication.
+The host performs Git/GitHub operations; the local helper only records the plan, approval and observed stages. Publish ends at the observed merge. No version selection, tags, releases or catalog promotion. Errors preserve the reached state; changed content needs fresh review and approval. Journals stay outside source and installation. Old release journals cannot resume in the new workflow.
 
 ## Limits
 
-The host performs Git/GitHub operations; the journal helper itself does not publish or authenticate human consent. No live publication was performed during implementation. Missing catalog repositories are not created implicitly. A released version whose catalog promotion failed is reported as partial completion.
+GitHub access and suitable host tools are needed. GitLab MRs are not integrated. Branch rules and required reviews remain binding. A merged plugin is available in the repository marketplace; existing users may need to sync. The full live publication workflow has not been separately accepted.
 
-[Release operations](release-operations.md) · [Evidence](release-evidence.md) · [Usage](usage.md)
+[Usage](usage.md) · [Installation](installation.md)

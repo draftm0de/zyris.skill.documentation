@@ -1,33 +1,27 @@
-# Häufige Fragen
+# Faq
 
 **Deutsch** | [English](../en/faq.md)
 
-[Start](../../README.md) · [Übersicht](README.md) · [Installation](installation.md) · [Nutzung](usage.md) · [Screens](screens.md) · [FAQ](faq.md)
+<img src="../assets/zyris-icon.png" alt="ZYRIS" width="48">
+
+[Start](../../README.md) · [Übersicht](README.md)
 
 ## Produkt und Zugang
 
-Das Produkt ist ein Plugin mit gebündelten Skills und Claude-Kommandos. Es baut GitHub-Markdown, keinen Shop und keine geschützte Auslieferungsplattform. Es führt weder Commit noch Push noch Veröffentlichung ohne Auftrag aus.
+Der Manager bündelt init, update, verify, export und publish. Der Import aus seinem GitHub-Repository wurde vom Nutzer für Claude und GPT bestätigt.
 
 ## Voraussetzungen
 
-Der Host benötigt Zugriff auf die Quelle und eine Ausführungsumgebung für die Python-Helfer. Lokale Paketierung benötigt Python 3.10+ und Make; Claude-Installation zusätzlich die Claude-CLI. Ohne geeignete Werkzeuge bleiben automatische Prüfungen offen.
+Für Import und Nutzung gelten Host-Konto und Repository-Zugriff. Für lokale Python-Helfer ist Python 3.10+ nötig. Publish benötigt GitHub-Schreibzugriff und geeignete Git-/GitHub-Werkzeuge des Hosts.
 
 ## Datenschutz und Speicherung
 
-Es gibt keinen eigenen Datenbankdienst. Dokumentation und Quellenzeiger liegen im Zielprojekt. Private CVs, Sitzungsdaten, `.env` und Zugangsdaten sind keine Dokumentationsquellen.
+Keine privaten CVs, Zustände, Zugangsdaten oder fremden Arbeitsdateien in Dokumentation übernehmen. Journals gehören außerhalb des Plugins und Quellrepositories.
 
 ## Fehlerbehebung
 
-Bei mehreren gefundenen Skills gib den konkreten Skill-Ordner an. Bei bestehendem Ziel nutze `verify` und gezielte Änderungen. Bei abweichendem vorhandenen Logo entscheidet der Nutzer über dessen Verwendung; das Werkzeug überschreibt es nicht still.
+Bei Metadaten-Drift `make sync-plugin` ausführen und den Diff prüfen. Bei fehlendem Update den Marketplace aktualisieren und einen neuen Chat öffnen. Eine interne Codex-Anzeige 1.0.0 bedeutet nicht, dass du eine Release-Version pflegen musst.
 
 ## Grenzen der Prüfung
 
-Die Strukturprüfung führt keinen Zielcode aus und ist kein vollständiger Secret-Scanner. Die Dokumentationsprüfung erkennt fehlende Seiten, Verweise, Überschriften, Sprachwechsel und Platzhalter; fachliche Richtigkeit und Übersetzungsqualität werden zusätzlich inhaltlich geprüft.
-
----
-
-Dokumentation erstellt mit ZYRIS Skill Manager. Die Urheberschaft des beschriebenen Produkts bleibt unverändert.
-
-### Veröffentlicht publish sofort?
-
-Nein. Zuerst werden Änderungen, Version, Changelog, Commit-Message, PR und Ziele vorbereitet und geprüft. Erst deine konkrete Freigabe erlaubt den gesamten beschriebenen Ablauf. Release-Actions sind nicht erforderlich; normale Test-CI bleibt möglich. [Ablauf](publish.md).
+Strukturprüfung und erfolgreicher Import beweisen nicht alle Funktionen, automatische Updates oder einen erfolgreichen Publish-Durchlauf. ZIP und Tags sind für diesen Installationsweg nicht nötig.

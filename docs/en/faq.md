@@ -1,33 +1,27 @@
-# FAQ
+# Faq
 
 [Deutsch](../de/faq.md) | **English**
 
-[Home](../../README.en.md) · [Overview](README.md) · [Install](installation.md) · [Use](usage.md) · [Screens](screens.md) · [FAQ](faq.md)
+<img src="../assets/zyris-icon.png" alt="ZYRIS" width="48">
+
+[Start](../../README.en.md) · [Guides](README.md)
 
 ## Product and access
 
-The product is a plugin containing skills and Claude commands. It builds GitHub Markdown, not a store or protected distribution platform. It does not commit, push or publish without instruction.
+The Manager bundles init, update, verify, export and publish. The user confirmed imports from its GitHub repository in Claude and GPT.
 
 ## Requirements
 
-The host needs access to source and an execution environment for the Python helpers. Local packaging needs Python 3.10+ and Make; Claude installation also needs its CLI. Without suitable tools, automated checks remain pending.
+Import and use require host account and repository access. Local Python helpers need Python 3.10+. Publish needs GitHub write access and suitable host Git/GitHub tools.
 
 ## Privacy and persistence
 
-There is no dedicated database service. Documentation and the source locator live in the target project. Private CVs, session data, `.env` and credentials are not documentation sources.
+Exclude private CVs, state, credentials and unrelated work from documentation. Journals belong outside the plugin and source repositories.
 
 ## Troubleshooting
 
-If multiple skills are found, specify the exact skill folder. For an existing destination use `verify` and targeted edits. If an existing logo differs, the user decides how to handle it; the helper does not silently overwrite it.
+For metadata drift run `make sync-plugin` and review the diff. For a missing update refresh the marketplace and open a new chat. An internal Codex label of 1.0.0 does not mean you must maintain a release version.
 
 ## Validation limits
 
-The structure audit does not execute target code and is not a comprehensive secret scanner. Documentation validation checks pages, links, headings, language switches and placeholders; factual accuracy and translation quality require semantic review as well.
-
----
-
-Documentation prepared with ZYRIS Skill Manager. Source-product ownership remains unchanged.
-
-### Does publish publish immediately?
-
-No. It first prepares and validates changes, version, changelog, commit message, PR and destinations. Only your explicit approval authorizes the stated workflow. Release Actions are not required; ordinary test CI may remain. [Workflow](publish.md).
+Structural checks and successful import do not prove every feature, automatic updates or an entire publication run. ZIPs and tags are unnecessary for this installation path.

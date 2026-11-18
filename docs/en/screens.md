@@ -28,12 +28,4 @@ Other supplied images establish **Einstellungen → Anpassungen → Plugins → 
 
 ## Capture checklist
 
-Capture only fictional or authorized content. Hide credentials, personal paths and private tabs. Store labelled illustrations separately under `docs/assets/de/` and `docs/assets/en/`; their content and meaning must agree.
-
----
-
-Documentation prepared with ZYRIS Skill Manager. Source-product ownership remains unchanged.
-
-### Pending installation captures (2026-11-18)
-
-For Claude Desktop, user captures establish the path through the repository dialog. Pending: approved catalog address entered, successful synchronization, product selection, installation, first use and update. Codex and ChatGPT installation captures remain pending. Use fictional data in isolated profiles for new captures; store under `docs/assets/en/` with surface, OS, version, date, provenance, alt text and caption. Preserve the language of original captures.
+The user confirmed imports in Claude and GPT on 2026-11-18. Existing images still show only the dialogs; success screens, first feature use and update captures remain missing. Capture only authorized fictional data. Record provenance, date, surface and visible app version. A user report is not a screenshot.

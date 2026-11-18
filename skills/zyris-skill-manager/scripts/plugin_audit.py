@@ -49,7 +49,7 @@ def audit(root):
         names = {value['name'] for value in manifests}
         versions = {value.get('version') for value in manifests if value.get('version')}
         add('identity', 'pass' if len(names) == 1 else 'fail', 'Plugin manifest names must agree')
-        add('version', 'pass' if len(versions) == 1 else 'fail', 'One unambiguous declared version is required; generated manifests may derive it')
+        add('version', 'pass' if not versions else 'fail', 'Repository updates follow commits; omit manifest versions')
     # Inspect legacy layouts, but never certify them as the common source layout.
     layout_issues = []
     portable = root / 'plugin.json'
@@ -65,11 +65,8 @@ def audit(root):
     for folder in ('.claude/skills', '.agents/skills'):
         if (root / folder).exists():
             layout_issues.append('Migrate host-local source ' + folder + ' to skills/')
-    for relative in ('.claude-plugin/plugin.json', '.codex-plugin/plugin.json'):
-        if (root / relative).exists():
-            layout_issues.append('Generate host manifest only in artifacts: ' + relative)
     add('neutral_source_layout', 'fail' if layout_issues else 'pass',
-        '; '.join(layout_issues) if layout_issues else 'Host-neutral skills/ source; host manifests are generated artifacts')
+        '; '.join(layout_issues) if layout_issues else 'Host-neutral skills/ source; committed host metadata is checked separately')
     skills = candidates(root)
     add('skills', 'pass' if skills else 'fail', 'At least one canonical skill with SKILL.md is required')
     duplicates = [name for name, paths in skills.items() if len(paths) > 1]
@@ -89,7 +86,7 @@ def audit(root):
             add('payload:' + name, 'fail' if suspicious else 'pass', 'Review unsafe/unexpected distributable paths: ' + ', '.join(suspicious) if suspicious else 'No obvious secret or unexpected paths or symlinks; ordinary Python caches are excluded by the validated builder, not a secret-content scan')
     # Load our trusted template, never the target repository's executable code.
     template = SKILL / 'templates/plugin'
-    for relative in ('scripts/plugin.py', 'scripts/release.py', 'scripts/publish.py', 'scripts/test_release_native.py', 'install.sh', 'plugin.mk'):
+    for relative in ('scripts/plugin.py', 'install.sh', 'plugin.mk'):
         target = root / relative
         matches = target.is_file() and not target.is_symlink() and target.read_bytes() == (template / relative).read_bytes()
         add('installer:' + relative, 'pass' if matches else 'fail',
@@ -97,13 +94,14 @@ def audit(root):
     makefile = root / 'Makefile'
     make = makefile.read_text() if makefile.is_file() else ''
     delegates = bool(re.search(r'^include plugin\.mk\s*$', make, re.MULTILINE))
-    overrides = bool(re.search(r'^(?:install|update|package|check-plugin)\s*:', make, re.MULTILINE))
+    overrides = bool(re.search(r'^(?:install|update|package|check-plugin|sync-plugin)\s*:', make, re.MULTILINE))
     add('installer:make', 'pass' if delegates and not overrides else 'fail', 'Makefile must include plugin.mk without overriding its installation recipes')
     try:
         spec = importlib.util.spec_from_file_location('trusted_plugin_template', template / 'scripts/plugin.py')
         engine = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(engine)
         engine.ROOT = root
+        engine.repository_metadata(check=True)
         _, portable, _ = engine.payload()  # In-memory only; never execute target code.
         py_errors, py_warnings = python_payload(portable)
         add('python_payload', 'fail' if py_errors else ('warning' if py_warnings else 'pass'),
@@ -143,8 +141,8 @@ def audit(root):
         add('documentation_export_contract', 'fail', str(exc))
     manual = [
         'Run appropriate tests and inspect their actual output; audit does not execute target code.',
-        'Test Python entry points from extracted packages outside the checkout; verify dynamic imports, dependencies, supported Python and filesystem ownership.',
-        'Build and validate each artifact in its real host; test install, update, permissions and uninstall.',
+        'Test Python entry points from an installed copy outside the checkout; verify dynamic imports, dependencies, supported Python and filesystem ownership.',
+        'Test repository import, update, permissions and uninstall in each supported host; development archive tests are optional.',
         'Verify product behavior, storage/privacy boundaries and unsupported claims.',
         'Review distribution/licensing decisions and required publisher metadata.',
         'Review German/English equivalence and screenshot provenance.'
@@ -157,7 +155,7 @@ def audit(root):
             'target_code_executed': False}
 
 
-def initialize(source, output, languages=None, default_language=None):
+def initialize(source, output, languages=None, default_language=None, repository=None, author=None):
     from documentation import language_policy
     language_policy(Path(output).expanduser().resolve(), languages, default_language)
     info = inspect(source)
@@ -184,8 +182,18 @@ def initialize(source, output, languages=None, default_language=None):
             if path.suffix in ('.pem','.key'):
                 raise ValueError(f'Private key-like file in source: {relative}')
             files[str(Path('skills') / name / relative)] = path.read_bytes()
-    manifest = {'name': name, 'version': '0.1.0', 'description': f'Plugin bundling the {name} skill.',
+    manifest = {'$schema': 'https://agent-plugins.org/schemas/1.0.0/plugin.schema.json', 'name': name, 'description': f'Plugin bundling the {name} skill.',
                 'extensions': {'io.zyris.distribution': {'skillRoot': 'skills'}}}
+    if repository:
+        if not re.fullmatch(r'https://github\.com/[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+', repository):
+            raise ValueError('Use a verified GitHub repository URL without credentials')
+        manifest['repository'] = repository
+    if author:
+        manifest['author'] = {'name': author}
+    spec = importlib.util.spec_from_file_location('init_plugin_template', SKILL / 'templates/plugin/scripts/plugin.py')
+    engine = importlib.util.module_from_spec(spec); spec.loader.exec_module(engine)
+    for relative, data in engine.repository_files(manifest).items():
+        files[relative] = (json.dumps(data, indent=2) + '\n').encode()
     files['plugin.json'] = (json.dumps(manifest, indent=2) + '\n').encode()
     files['assets/icon.png'] = icon_source().read_bytes()
     template_root = SKILL / 'templates/plugin'
@@ -210,7 +218,7 @@ def initialize(source, output, languages=None, default_language=None):
     scaffold(output / 'skills' / name, output, name, languages, default_language)
     return {'initialized': str(output), 'source_preserved': str(source),
             'production_ready': None,
-            'next': 'Author the selected documentation languages, inspect manifests, add behavior-specific tests and validate hosts. Boilerplate checks alone do not establish production readiness.'}
+            'next': 'Confirm repository URL and publisher metadata before import; do not invent them. Author the selected documentation languages, inspect manifests, add behavior-specific tests and validate hosts. Boilerplate checks alone do not establish production readiness.'}
 
 
 def main(argv=None):
@@ -221,11 +229,13 @@ def main(argv=None):
     init = sub.add_parser('init')
     init.add_argument('--source', type=Path, required=True)
     init.add_argument('--output', type=Path, required=True)
+    init.add_argument('--repository')
+    init.add_argument('--author')
     init.add_argument('--languages', nargs='+', choices=('de','en'))
     init.add_argument('--default-language', choices=('de','en'))
     args = parser.parse_args(argv)
     try:
-        result = audit(args.source) if args.command == 'verify' else initialize(args.source, args.output, args.languages, args.default_language)
+        result = audit(args.source) if args.command == 'verify' else initialize(args.source, args.output, args.languages, args.default_language, args.repository, args.author)
         print(json.dumps(result, ensure_ascii=False, indent=2))
         return int(args.command == 'verify' and result['status'] == 'needs_attention')
     except (OSError, ValueError) as exc:

@@ -16,13 +16,10 @@ import sys
 import tempfile
 sys.dont_write_bytecode = True
 
-STAGES = ['prepared', 'approved', 'committed', 'pushed', 'pr_open', 'checks_passed',
-          'merged', 'tagged', 'released', 'catalog_promoted']
+STAGES = ['prepared', 'approved', 'committed', 'pushed', 'pr_open', 'checks_passed', 'merged']
 FIELDS = {'committed': ['commit'], 'pushed': ['commit', 'branch'],
           'pr_open': ['url', 'head'], 'checks_passed': ['head', 'checks'],
-          'merged': ['commit', 'url'], 'tagged': ['commit', 'tag'],
-          'released': ['commit', 'tag', 'url', 'bundle_sha256'],
-          'catalog_promoted': ['commit', 'url', 'release_tag']}
+          'merged': ['commit', 'url']}
 
 
 def encoded(value):
@@ -70,23 +67,15 @@ def stable(root, files):
         raise ValueError('Use a credential-free GitHub origin URL; never journal embedded credentials')
     return {'head': git(root, 'rev-parse', 'HEAD').decode().strip(),
             'files': fingerprint(root, files),
+            'metadata': fingerprint(root, [p for p in ('plugin.json', '.claude-plugin/plugin.json', '.claude-plugin/marketplace.json', '.agents/plugins/marketplace.json') if (root / p).exists()]),
             'index': sha(git(root, 'diff', '--cached', '--binary', 'HEAD', '--')),
             'origin': origin}
 
 
-def check_version(value):
-    if not isinstance(value, str) or not re.fullmatch(r'(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)', value):
-        raise ValueError('Publication version must be stable SemVer major.minor.patch')
-    return tuple(map(int, value.split('.')))
-
-
 def check_proposal(root, proposal):
-    required = {'version', 'previous_version', 'files', 'commit_message', 'pr_title', 'pr_body',
-                'branch', 'base_branch', 'repository', 'merge_method', 'checks', 'catalog'}
+    required = {'files', 'commit_message', 'pr_title', 'pr_body',
+                'branch', 'base_branch', 'repository', 'merge_method', 'checks'}
     if set(proposal) != required: raise ValueError('Proposal fields must be: ' + ', '.join(sorted(required)))
-    version = check_version(proposal['version'])
-    if proposal['previous_version'] is not None and version <= check_version(proposal['previous_version']):
-        raise ValueError('Version must increase from last published version')
     if proposal['merge_method'] not in ('squash', 'merge', 'rebase'): raise ValueError('Invalid merge method')
     for field in ('commit_message', 'pr_title', 'pr_body', 'base_branch', 'branch', 'repository'):
         if not isinstance(proposal[field], str) or not proposal[field].strip(): raise ValueError('Missing ' + field)
@@ -99,22 +88,14 @@ def check_proposal(root, proposal):
     files = proposal['files']
     if not isinstance(files, list) or not files or len(files) != len(set(files)):
         raise ValueError('Select a unique explicit file list')
-    if not {'plugin.json', 'CHANGELOG.md'}.issubset(files): raise ValueError('Select plugin.json and CHANGELOG.md')
     manifest = json.loads(safe_file(root, 'plugin.json').read_text())
-    if manifest['version'] != proposal['version'] or manifest.get('repository') != proposal['repository']:
-        raise ValueError('Manifest version/repository does not match proposal')
-    if f'## [{proposal["version"]}]' not in safe_file(root, 'CHANGELOG.md').read_text():
-        raise ValueError('Missing version section in CHANGELOG.md')
+    if manifest.get('repository') != proposal['repository']:
+        raise ValueError('Manifest repository does not match proposal')
+    if 'version' in manifest:
+        raise ValueError('Repository publication follows commits; omit the manifest version')
     checks = proposal['checks']
     if not isinstance(checks, list) or not checks or any(not isinstance(c, dict) or c.get('result') != 'passed' or not c.get('name') or not c.get('evidence') for c in checks):
         raise ValueError('Record passing checks and their evidence before proposing publication')
-    catalog = proposal['catalog']
-    if (not isinstance(catalog, dict) or set(catalog) != {'repository', 'branch', 'expected_head', 'products'}
-            or not re.fullmatch(r'https://github\.com/[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+', str(catalog['repository']))
-            or not re.fullmatch(r'(?:[0-9a-f]{40}|[0-9a-f]{64})', str(catalog['expected_head']))
-            or not isinstance(catalog['products'], list) or manifest['name'] not in catalog['products']):
-        raise ValueError('Resolve the existing catalog, expected head and complete product set before approval')
-    subprocess.run(['git', 'check-ref-format', '--branch', catalog['branch']], check=True, capture_output=True)
 
 
 def state_directory(path, root=None):
@@ -150,6 +131,8 @@ def read(path):
     path = state_directory(path)
     if (path / 'publication.json').is_symlink(): raise ValueError('Journal file must not be a symlink')
     data = json.loads((path / 'publication.json').read_text())
+    if data['plan'].get('schema_version') != 2:
+        raise ValueError('Legacy publication journal: prepare a new plan and obtain new approval')
     if sha(encoded(data['plan'])) != data['digest']: raise ValueError('Publication plan integrity mismatch')
     if data['stage'] not in STAGES: raise ValueError('Unknown journal stage')
     return data
@@ -165,7 +148,7 @@ def prepare(root, proposal, state):
     if origin != proposal['repository']:
         raise ValueError('Git origin and proposed repository differ')
     # No pre-existing staged changes may be swept into the publication commit.
-    plan = {'schema_version': 1, 'source': str(root), 'proposal': proposal, 'snapshot': current}
+    plan = {'schema_version': 2, 'source': str(root), 'proposal': proposal, 'snapshot': current}
     data = {'plan': plan, 'digest': sha(encoded(plan)), 'stage': 'prepared', 'events': []}
     with locked(state):
         file = state / 'publication.json'
@@ -213,22 +196,18 @@ def checkpoint(state, stage, evidence):
             if field in evidence and not re.fullmatch(r'(?:[0-9a-f]{40}|[0-9a-f]{64})', str(evidence[field])):
                 raise ValueError('Checkpoint requires a full commit hash')
         if 'url' in evidence:
-            repository = proposal['catalog']['repository'] if stage == 'catalog_promoted' else proposal['repository']
-            if not evidence['url'].startswith(repository + '/'):
+            repository = proposal['repository']
+            if not isinstance(evidence['url'], str) or not re.fullmatch(re.escape(repository) + r'/pull/[1-9][0-9]*', evidence['url']):
                 raise ValueError('Checkpoint URL belongs to another repository')
-        if stage == 'released' and not re.fullmatch(r'[0-9a-f]{64}', str(evidence['bundle_sha256'])):
-            raise ValueError('Release checkpoint requires a SHA-256 bundle digest')
         events = {event['stage']: event.get('evidence', {}) for event in data['events']}
         if stage == 'pushed' and (evidence['commit'] != events['committed']['commit'] or evidence['branch'] != proposal['branch']):
             raise ValueError('Pushed commit/branch differs from approved publication')
         if stage in ('pr_open', 'checks_passed') and evidence['head'] != events['committed']['commit']:
             raise ValueError('PR head changed; new review required')
-        if stage == 'checks_passed' and any(c.get('result') != 'passed' for c in evidence['checks']):
+        if stage == 'checks_passed' and (not isinstance(evidence['checks'], list) or not evidence['checks'] or any(not isinstance(c, dict) or not c.get('name') or c.get('result') != 'passed' for c in evidence['checks'])):
             raise ValueError('Pending/failed checks must not be bypassed')
-        if stage in ('tagged', 'released') and (evidence['tag'] != 'v' + proposal['version'] or evidence['commit'] != events['merged']['commit']):
-            raise ValueError('Tag/release must identify the actual merged commit')
-        if stage == 'catalog_promoted' and evidence['release_tag'] != 'v' + proposal['version']:
-            raise ValueError('Catalog points to another release')
+        if stage == 'merged' and evidence['url'] != events['pr_open']['url']:
+            raise ValueError('Merged PR differs from approved publication')
         data['stage'] = stage;data['events'].append({'stage': stage, 'evidence': evidence})
         write(state / 'publication.json', data)
     return data

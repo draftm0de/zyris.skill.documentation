@@ -4,14 +4,14 @@
     "name": "Peter Fux",
     "url": "https://draftmode.io"
   },
+  "metadata": {
+    "description": "Manage skill plugins: structure, documentation, validation and approval-gated publication."
+  },
   "plugins": [
     {
       "name": "zyris-skill-manager",
       "source": "./",
       "description": "Manage skill plugins: structure, documentation, validation and approval-gated publication."
     }
-  ],
-  "metadata": {
-    "description": "ZYRIS Skill Manager: structure, documentation and validation for skill plugins."
-  }
+  ]
 }

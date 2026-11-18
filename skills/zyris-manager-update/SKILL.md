@@ -3,7 +3,7 @@ name: zyris-manager-update
 description: Re-read canonical sources and refresh documentation in the repository-selected languages. Reuse the source and language configuration manifest without duplicating product facts.
 ---
 
-# Documentation update
+# Manager update
 
 Re-read canonical sources and refresh documentation in the repository-selected languages. Reuse the source and language configuration manifest without duplicating product facts.
 

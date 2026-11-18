@@ -11,7 +11,7 @@ jobs:
         with:
           python-version: '3.12'
       - run: make test
-      - run: make package
+      - run: make check-plugin
       - run: make validate-docs OUTPUT=.
       - run: make check-docs-export
       - run: make export-docs

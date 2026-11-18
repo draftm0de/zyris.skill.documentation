@@ -12,13 +12,15 @@
 
 ## Installieren
 
-<!-- Nur veröffentlichte Katalogadresse verwenden; sonst klar als Vorschau markieren. Sichtbare UI-Schritte, Berechtigungen und Erfolgsprüfung beschreiben. Claude UI, Claude Code, Codex Desktop/CLI und ChatGPT getrennt belegen. -->
+<!-- Verifizierte Produktrepository-URL direkt als Marketplace verwenden. Fehlt sie, vor Veröffentlichung klären. Keine ZIP-, Tag- oder Versionspflicht behaupten. Sichtbare UI-Schritte, Berechtigungen und Erfolgsprüfung beschreiben. Claude UI, Claude Code, Codex Desktop/CLI und ChatGPT getrennt belegen. -->
+
+<!-- Repository import: show the actual URL, root catalog files, supported host UI and account limits. No separate release/catalog prerequisite. -->
 
 {{CONTENT_02}}
 
 ## Aktualisieren
 
-<!-- Katalog- und Plugin-Update, neue Sitzung, Datenerhalt und Fehlerfall erklären. Ungeprüfte grafische Schaltflächen nicht erfinden. -->
+<!-- Repository-Marketplace synchronisieren/aktualisieren, neue Sitzung, Datenerhalt und Fehlerfall erklären. Ungeprüfte grafische Schaltflächen nicht erfinden. -->
 
 {{CONTENT_03}}
 

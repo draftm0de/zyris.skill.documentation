@@ -3,7 +3,7 @@ name: zyris-manager-verify
 description: Audit the plugin structure and report production-readiness gaps. Distinguish automated structural checks from unverified host acceptance.
 ---
 
-# Documentation verify
+# Manager verify
 
 Audit the plugin structure and report production-readiness gaps. Distinguish automated structural checks from unverified host acceptance.
 

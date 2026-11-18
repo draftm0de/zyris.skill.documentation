@@ -3,7 +3,7 @@ name: zyris-manager-init
 description: Inspect the source skill, clarify unresolved facts, then initialize a separate empty plugin repository. Never overwrite or move existing sources.
 ---
 
-# Documentation init
+# Manager init
 
 Inspect the source skill, clarify unresolved facts, then initialize a separate empty plugin repository. Never overwrite or move existing sources.
 

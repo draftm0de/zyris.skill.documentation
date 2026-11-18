@@ -2,49 +2,30 @@
 
 [Deutsch](../de/usage.md) | **English**
 
-[Home](../../README.en.md) · [Overview](README.md) · [Install](installation.md) · [Use](usage.md) · [Screens](screens.md) · [FAQ](faq.md)
+<img src="../assets/zyris-icon.png" alt="ZYRIS" width="48">
+
+[Start](../../README.en.md) · [Guides](README.md)
 
 ## Set up
 
-Choose languages per target repository: German only, English only or both. In `docs/documentation.json`, `documentation` can contain `{"languages":["en"],"default_language":"en"}`. English only produces `README.md` and `docs/en/`; German pages and language switches are not required. The agent asks when the choice is unclear. Switching languages does not automatically delete existing content.
-
-Provide a local skill or repository path. Multiple skills require a selection. Without local filesystem access, provide a sanitized source archive. A path on your computer does not automatically become available in a cloud session.
+Provide an accessible source folder. Language and output are resolved per repository; `docs/documentation.json` stores only source pointers, languages and export configuration. A hosted session without local access needs a sanitized source copy.
 
 ## Choose a workflow
 
-In Codex select the installed plugin or request it by name: “Use ZYRIS Skill Manager to verify this repository.” The plugin bundles init, update and verify capabilities; Claude slash commands are not assumed to apply to Codex.
-
-In Claude:
-
-```text
-/zyris-skill-manager:verify ../my-plugin
-/zyris-skill-manager:update ../my-plugin
-/zyris-skill-manager:init ../my-skill ../new-plugin
-```
-
-In ChatGPT: “Use ZYRIS Skill Manager to verify this plugin’s structure.” or “Update its German and English documentation.”
+Choose init, update, verify, export or publish. For example, in Claude Code use `/zyris-skill-manager:init SOURCE OUTPUT`. In Codex/GPT select the relevant capability or describe the action. Claude slash-command UI is not assumed for every host.
 
 ## Understand the output
 
-The structure report distinguishes failures, warnings and manual checks. `production_ready: null` explicitly means not established. `init` initially creates templates; the agent must then author their content from source evidence.
+Init creates a separate copy under `skills/`, a versionless manifest, both marketplace files, the Claude manifest and development/documentation starters. Missing repository URL and publisher metadata must be resolved. Templates alone are not finished product documentation. Verify distinguishes failures, warnings and outstanding manual checks; `production_ready: null` is not approval.
 
 ## Control the session
 
-The agent asks about contradictions. You can limit scope or stop work. Changes occur in individual files; stopping does not guarantee an automatic rollback. Review the Git diff.
+Limit the request to the intended files or actions. Init never overwrites an existing project. Existing projects receive targeted edits; review their diff. Stopping does not automatically undo completed changes.
 
 ## Return later
 
-Run `update` again. `docs/documentation.json` can locate the canonical skill and additional sources. It does not store facts, versions or capabilities; those are reread from source.
+Update reads current sources again. Publish can resume from a private journal after checking actual GitHub state and the original approval. Old release journals require a new plan.
 
 ## Specialized workflows
 
-[**publish: prepare and approve publication**](publish.md). Review the proposed version and commit message before commit/push/PR/merge. Tag, release and catalog promotion follow within the same approved scope.
-
-
-The `export` action validates or builds a website bundle from existing source. In Claude: `/zyris-skill-manager:export REPOSITORY`. In Codex or ChatGPT request the documentation export from the plugin. Exporting does not publish or rewrite content.
-
-`init` requires a separate empty destination; `.git`, `.idea` and `.DS_Store` may exist. Existing projects are audited first and changed deliberately. The original source is not moved. The new project receives an independent copy, not automatic synchronization.
-
----
-
-Documentation prepared with ZYRIS Skill Manager. Source-product ownership remains unchanged.
+[Publish](publish.md) proposes a commit message and performs commit → push → PR → checks → merge only after approval. No version approval, tags or releases. Export creates a website ZIP from existing Markdown; that ZIP is not an installation package.

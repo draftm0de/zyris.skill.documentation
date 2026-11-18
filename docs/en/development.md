@@ -2,53 +2,33 @@
 
 [Deutsch](../de/development.md) | **English**
 
-[Home](../../README.en.md) · [Overview](README.md) · [Install](installation.md) · [Use](usage.md) · [Screens](screens.md) · [FAQ](faq.md)
+<img src="../assets/zyris-icon.png" alt="ZYRIS" width="48">
+
+[Start](../../README.en.md) · [Guides](README.md)
 
 ## Source of truth
 
-The [main workflow](../../skills/zyris-skill-manager/SKILL.md) and its references define behavior. Thin action skills delegate to it. `plugin.json` holds the base version; the build derives host manifests. Documentation and its copied logo are derived output.
-
-The common source layout uses `skills/<name>/` at the plugin project root for every host. `init` creates it; `verify` rejects different configured roots, host-local skill sources and source-level host manifests. Older layouts remain discoverable for inspection and explicit migration, not as an alternative standard. A plugin can bundle several capabilities without separate installations.
-
-Shared hygiene: `.tmp/` is created only when local scratch work or diagnostic output needs it; `dist/` contains generated packages. `.DS_Store`, `.idea/`, caches, bytecode and dependency environments are ignored. Preserve project-specific ignore rules and diagnostic evidence. Development scripts belong in root `scripts/`; runtime scripts belong with their skill. Use bytecode suppression for local Python imports and test extracted packages independently of the checkout. Documentation-plugin verify checks effective ignore rules, tracked generated files and static packaged-Python syntax/imports; it does not run target code or prove host acceptance.
+`skills/zyris-skill-manager/` contains rules, runtime and canonical templates. Root `plugin.json` owns identity and host metadata. `make sync-plugin` derives the three committed host files; `make check-plugin` detects drift without writing. Capabilities stay under `skills/`, assets under `assets/`.
 
 ## Checks
 
-`ZYRIS_TEST_CODEX_NATIVE=1 make test` additionally runs the real Codex CLI in an isolated temporary profile: installation, reinstallation and an update after content changes. This test does not modify the personal Codex profile.
-
 ```sh
+make check-plugin
 make test
-make validate-docs OUTPUT=.
 make verify SOURCE=.
+make validate-docs OUTPUT=.
 ```
 
-`verify` returns exit code 1 for failures or warnings. Missing licensing decisions or unfinished documentation remain visible; do not weaken checks to hide them. Actual host journeys are also required.
+Verify never executes target code. It checks neutral skill paths, versionless import metadata, template copies, ignore rules, static Python imports and documentation pointers. Product behavior tests and host acceptance remain necessary.
 
 ## Packaging
 
-The canonical installation implementation lives in `skills/zyris-skill-manager/templates/plugin/`. Each project’s `scripts/plugin.py`, `install.sh` and `plugin.mk` are generated copies; `verify` detects drift. Name, base version and metadata come from `plugin.json`. The `io.zyris.distribution` extension defines `skillRoot`, optional `marketplace` and optional extra package files (`files`: destination → source). All host manifests are derived during the build.
-
-`make package` builds reproducible Claude, ChatGPT and Codex plugin ZIPs and local Claude and Codex marketplaces in `dist/`. Source symlinks are rejected. Runtime, templates and icon determine the version hash; development files are excluded.
+Repository import does not require a package build. `make package` remains optional developer tooling for isolated runtime tests. Its hash labels are local cache identifiers, not maintained release versions. Website export: `make check-docs-export` and `make export-docs`.
 
 ## CI and releases
 
-[Release operations and approval gates](release-operations.md) · [Verification evidence](release-evidence.md).
-
-
-The [CI](../../.github/workflows/validate.yml) runs tests, packaging and documentation validation. It publishes nothing. A successful local run proves neither remote CI success nor host acceptance.
+The [CI](../../.github/workflows/validate.yml) checks tests, repository metadata and documentation. It publishes nothing. Publish ends at the checked GitHub merge; there are no release Actions, tags or catalog promotion. [Workflow](publish.md) · [Evidence](release-evidence.md).
 
 ## Maintain documentation
 
-### Website export
-
-`make check-docs-export` validates the contract; `make export-docs` creates `dist/<plugin-name>-documentation.zip` with `index.json`, unchanged Markdown pages and selected assets. The `export` configuration in `docs/documentation.json` contains only page and asset pointers. Product metadata comes from `plugin.json`; languages come from the existing documentation settings. The index adds link mappings, checksums and Git provenance, explicitly marking local changes. The website owns routing and safe rendering. Nothing is published.
-
-[Export contract v1](../../skills/zyris-skill-manager/references/export-contract.md)
-
-Run the plugin’s `update` action and review the Git diff for both languages. Use `make scaffold SOURCE=... OUTPUT=...` only for missing templates; the helper does not author prose. `make init-plugin SOURCE=... OUTPUT=...` creates a separate starter with manifests, build, starter tests, CI and documentation templates.
-
----
-
-Documentation prepared with ZYRIS Skill Manager. Source-product ownership remains unchanged.
-
-For new projects: `make init-plugin SOURCE=... OUTPUT=... LANGUAGES=en DEFAULT_LANGUAGE=en`. `make scaffold` accepts the same language parameters; conflicting existing configuration is protected.
+Update maintains configured languages from current sources. Example: `make init-plugin SOURCE=... OUTPUT=... LANGUAGES="de en" DEFAULT_LANGUAGE=de`. Optional: `REPOSITORY=https://github.com/OWNER/REPO AUTHOR="Confirmed publisher"`. Init creates a separate empty project; the agent then completes its documentation. Website export retains its [contract](../../skills/zyris-skill-manager/references/export-contract.md).

@@ -2,7 +2,7 @@
 
 ## Source hierarchy
 
-- Plugin manifest/configuration: identity, version and declared integrations.
+- Plugin manifest/configuration: identity, repository and declared integrations.
 - Canonical SKILL.md and references: intended workflow and behavior.
 - Runtime, installer, Makefile and packaging: actually implemented operations and commands.
 - Explicit product decision document, if present: audience, scope and positioning not represented elsewhere.
@@ -17,7 +17,7 @@ The plugin project root uses the same neutral base structure across products:
 `Makefile`, `plugin.mk`, `docs.mk` and `install.sh`.
 `skills/<name>/` is the canonical runtime source for every host. Root `scripts/`
 holds development tooling; runtime helpers belong with their capability.
-Host manifests are generated in `dist/`, never maintained in the source root.
+Host metadata is generated from root `plugin.json` with `make sync-plugin` and committed at `.claude-plugin/plugin.json`, `.claude-plugin/marketplace.json` and `.agents/plugins/marketplace.json`. Both catalogs use `./` as plugin source. `make check-plugin` detects drift. Repository manifests omit version pins; updates follow the configured Git branch.
 
 Create additional directories only for real functionality. For example,
 `commands/` holds the documentation plugin's shipped Claude action entry points;

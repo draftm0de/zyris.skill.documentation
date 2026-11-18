@@ -3,6 +3,7 @@ include plugin.mk
 export PYTHONDONTWRITEBYTECODE := 1
 .PHONY: help test
 help:
+	@echo 'make sync-plugin / check-plugin     Generate / validate committed repository import metadata'
 	@echo 'make check-docs-export / export-docs  Validate / build the website documentation bundle'
 	@echo "make test | package | check-plugin | install/update TARGET=claude|chatgpt|codex"
 test:

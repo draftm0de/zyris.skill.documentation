@@ -22,7 +22,7 @@ class AuditTests(unittest.TestCase):
 
     def test_init_packages_and_preserves_source(self):
         before = (self.source / 'SKILL.md').read_bytes()
-        result = audit.initialize(self.source, self.output, languages=['de','en'])
+        result = audit.initialize(self.source, self.output, languages=['de','en'], repository='https://github.com/example/fictional', author='Fictional Team')
         self.assertIsNone(result['production_ready'])
         self.assertEqual(before, (self.source / 'SKILL.md').read_bytes())
         self.assertTrue((self.output / '.github/workflows/validate.yml').is_file())
@@ -45,22 +45,22 @@ class AuditTests(unittest.TestCase):
         target = self.output / 'README.md'
         target.write_text('User content')
         with self.assertRaisesRegex(ValueError, 'not empty'):
-            audit.initialize(self.source, self.output, languages=['de','en'])
+            audit.initialize(self.source, self.output, languages=['de','en'], repository='https://github.com/example/fictional', author='Fictional Team')
         self.assertEqual('User content', target.read_text())
         self.assertEqual([target], list(self.output.iterdir()))
 
     def test_private_source_and_symlink_output_refused_before_writes(self):
         (self.source / '.env').write_text('FICTIONAL=only')
         with self.assertRaisesRegex(ValueError, 'private/cache'):
-            audit.initialize(self.source, self.output, languages=['de','en'])
+            audit.initialize(self.source, self.output, languages=['de','en'], repository='https://github.com/example/fictional', author='Fictional Team')
         self.assertFalse(self.output.exists())
         (self.source / '.env').unlink()
         self.output.symlink_to(self.root / 'elsewhere')
         with self.assertRaisesRegex(ValueError, 'symlinks'):
-            audit.initialize(self.source, self.output, languages=['de','en'])
+            audit.initialize(self.source, self.output, languages=['de','en'], repository='https://github.com/example/fictional', author='Fictional Team')
 
     def test_read_only_audit_finds_duplicate_canonical_sources(self):
-        audit.initialize(self.source, self.output, languages=['de','en'])
+        audit.initialize(self.source, self.output, languages=['de','en'], repository='https://github.com/example/fictional', author='Fictional Team')
         duplicate = self.output / '.claude/skills/fictional-example/SKILL.md'
         duplicate.parent.mkdir(parents=True)
         duplicate.write_bytes((self.source / 'SKILL.md').read_bytes())
@@ -71,7 +71,7 @@ class AuditTests(unittest.TestCase):
         self.assertEqual(before, {str(p):p.read_bytes() for p in self.output.rglob('*') if p.is_file()})
 
     def test_verify_detects_installer_drift_without_executing_it(self):
-        audit.initialize(self.source, self.output, languages=['de','en'])
+        audit.initialize(self.source, self.output, languages=['de','en'], repository='https://github.com/example/fictional', author='Fictional Team')
         engine = self.output / 'scripts/plugin.py'
         engine.write_text("raise RuntimeError('must never execute target')\n")
         report = audit.audit(self.output)
@@ -80,7 +80,7 @@ class AuditTests(unittest.TestCase):
 
     def test_python_cache_is_not_a_release_blocker_and_is_not_packaged(self):
         import zipfile
-        audit.initialize(self.source, self.output, languages=['de','en'])
+        audit.initialize(self.source, self.output, languages=['de','en'], repository='https://github.com/example/fictional', author='Fictional Team')
         cache = self.output / 'skills/fictional-example/scripts/__pycache__'
         cache.mkdir(parents=True)
         bytecode = cache / 'fictional.cpython-312.pyc'
@@ -129,20 +129,21 @@ class AuditTests(unittest.TestCase):
                 self.assertEqual(before, {str(p): p.read_bytes() for p in self.output.rglob('*') if p.is_file()})
                 destination.rename(self.output / 'skills')
 
-    def test_init_has_neutral_sources_and_verify_rejects_source_host_manifests(self):
+    def test_init_generates_importable_metadata_and_audit_detects_drift(self):
         audit.initialize(self.source, self.output, languages=['en'])
         self.assertTrue((self.output / 'skills/fictional-example/SKILL.md').is_file())
         self.assertFalse((self.output / '.claude').exists())
-        report = audit.audit(self.output)
-        self.assertEqual('pass', next(c['status'] for c in report['checks'] if c['id'] == 'neutral_source_layout'))
-        for relative in ('.claude-plugin/plugin.json', '.codex-plugin/plugin.json'):
+        self.assertNotIn('version', json.loads((self.output / 'plugin.json').read_text()))
+        for relative in ('.claude-plugin/plugin.json', '.claude-plugin/marketplace.json', '.agents/plugins/marketplace.json'):
+            path = self.output / relative
+            original = path.read_bytes()
             with self.subTest(relative=relative):
-                path = self.output / relative
-                path.parent.mkdir(parents=True, exist_ok=True)
-                path.write_bytes((self.output / 'plugin.json').read_bytes())
+                path.write_text('{}')
                 report = audit.audit(self.output)
-                self.assertEqual('fail', next(c['status'] for c in report['checks'] if c['id'] == 'neutral_source_layout'))
-                path.unlink()
+                self.assertEqual('fail', next(c['status'] for c in report['checks'] if c['id'] == 'installer:manifest'))
+                self.assertEqual('{}', path.read_text())
+                path.write_bytes(original)
+        self.assertEqual('pass', next(c['status'] for c in audit.audit(self.output)['checks'] if c['id'] == 'installer:manifest'))
 
     def test_malformed_manifest_is_reported(self):
         self.output.mkdir()

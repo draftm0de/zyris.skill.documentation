@@ -78,11 +78,12 @@ class PluginTests(unittest.TestCase):
             self.assertFalse(result['installed'])
             run.assert_not_called()
             self.assertIn('Manually', result['next'])
+            self.assertNotIn('artifacts', result)
 
     def test_native_claude_install_and_update_commands(self):
         with patch.object(plugin, 'build', return_value={'claude_marketplace':'/fictional/market'}), patch.object(plugin.shutil, 'which', return_value='claude'), patch.object(plugin.subprocess, 'run') as run:
             plugin.install('claude')
-            self.assertIn('--marketplace', run.call_args.args[0])
+            self.assertEqual(run.call_args.args[0][1:3], ['plugin', 'install'])
             self.assertNotIn('skills', ' '.join(run.call_args.args[0]))
             run.reset_mock()
             plugin.install('claude', update=True)
@@ -104,3 +105,28 @@ class PluginTests(unittest.TestCase):
             self.assertEqual((market / 'user.txt').read_text(), 'preserve')
             with self.assertRaises(ValueError):
                 plugin.read_file(market)
+
+
+class RepositoryMetadataTests(unittest.TestCase):
+    def test_committed_metadata_has_no_version_and_matches_identity(self):
+        self.assertTrue(plugin.repository_metadata(check=True)['valid'])
+        self.assertNotIn('version', plugin.configuration()[0])
+
+    def test_sync_refuses_symlink_before_writing(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            for folder in ('skills', 'assets'):
+                shutil.copytree(ROOT / folder, root / folder)
+            shutil.copy2(ROOT / 'plugin.json', root / 'plugin.json')
+            outside = root / 'outside'; outside.mkdir()
+            (root / '.claude-plugin').symlink_to(outside, target_is_directory=True)
+            with patch.object(plugin, 'ROOT', root), self.assertRaisesRegex(ValueError, 'Symlink'):
+                plugin.repository_metadata()
+            self.assertEqual([], list(outside.iterdir()))
+
+    def test_native_update_uses_git_marketplace_upgrade_without_build(self):
+        with patch.object(plugin, 'build') as build, patch.object(plugin.shutil, 'which', return_value='codex'), patch.object(plugin.subprocess, 'run') as run:
+            result = plugin.install('codex', update=True)
+            build.assert_not_called()
+            self.assertEqual(['codex', 'plugin', 'marketplace', 'upgrade', 'zyris-manager', '--json'], result['commands'][0])
+            run.assert_called_once()

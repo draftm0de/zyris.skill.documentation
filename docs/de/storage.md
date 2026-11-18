@@ -1,33 +1,27 @@
-# Speicherung und Wiederherstellung
+# Storage
 
 **Deutsch** | [English](../en/storage.md)
 
-[Start](../../README.md) · [Übersicht](README.md) · [Installation](installation.md) · [Nutzung](usage.md) · [Screens](screens.md) · [FAQ](faq.md)
+<img src="../assets/zyris-icon.png" alt="ZYRIS" width="48">
+
+[Start](../../README.md) · [Übersicht](README.md)
 
 ## Speichermodell
 
-Dateien im Zielrepository sind das Ergebnis. `README.md` und `docs/de/` sind Deutsch, `README.en.md` und `docs/en/` Englisch. Das gemeinsame Logo liegt unter `docs/assets/zyris-icon.png`.
+Dokumentation liegt im Zielrepository; Init erzeugt eine separate Quellkopie. Ein Publish-Journal liegt privat außerhalb von Quelle und Installation.
 
 ## Einrichtung und Konfiguration
 
-Der optionale Quellenzeiger enthält `schema_version`, optional `source_skill`, `extra_sources`, `open_questions` und die Sprachkonfiguration `documentation`. Relative Quellen müssen im Repository liegen. Bei externen Quellen werden nur die Dokumentationseinstellungen gespeichert; gib die Quelle beim nächsten Aufruf erneut an.
+`docs/documentation.json` speichert Quellenzeiger und Sprache; `plugin.json` enthält Produktmetadaten. Abgeleitete Host-Dateien werden eingecheckt. Temporäre Dateien und `dist/` werden ignoriert.
 
 ## Speichern und fortsetzen
 
-Änderungen werden als normale Dateien gespeichert. Bei Wiederaufnahme liest der Agent die kanonischen Quellen erneut. Erledigte Fragen werden entfernt oder in der maßgeblichen Quelldatei geklärt; Produktbeschreibungen werden nicht im Manifest dupliziert.
+Git dokumentiert Änderungen. Der Journalhelfer speichert Plan-Digest, Freigabetext und beobachtete Schritte. Er führt selbst keine externen Aktionen aus.
 
 ## Fehler und Wiederherstellung
 
-Scaffolding überschreibt keine vorhandenen Seiten. `init` verweigert gefüllte Ziele. Bei Schreibfehlern können bereits erstellte Dateien zurückbleiben; prüfe den Diff und setze gezielt fort. Eine projektweite Transaktion oder gleichzeitige Bearbeitung mehrerer Agenten wird nicht garantiert.
+Nach Unterbrechung zuerst tatsächlichen Git-/PR-Stand prüfen. Keine doppelten Commits oder PRs nach einem Timeout. Geänderte Vorschläge brauchen eine neue Freigabe.
 
 ## Einschränkungen
 
-Keine automatische Cloud-Synchronisierung, keine dauerhafte Chat-Erinnerung und kein Backupdienst. Nutze die Versionsverwaltung des Zielprojekts. Ein Commit bleibt eine separate, ausdrücklich beauftragte Aktion.
-
----
-
-Dokumentation erstellt mit ZYRIS Skill Manager. Die Urheberschaft des beschriebenen Produkts bleibt unverändert.
-
-### Publish journal
-
-Das private Freigabejournal liegt außerhalb der Plugin-Installation und des Quellrepositories. Es enthält ausgewählte Dateipfade/Hashes, Nachrichtenentwürfe, die konkrete Freigabeantwort und Veröffentlichungsnachweise. Keine Tokens speichern; Journal für Wiederaufnahme behalten und erst auf eigenen Wunsch löschen. Siehe [publish](publish.md).
+Der Journalinhalt ist kein Identitätsnachweis und ersetzt keine echte Zustimmung. Deinstallation löscht keine externen Projektdateien. Der KI-Host kann bereitgestellte Quellen verarbeiten.

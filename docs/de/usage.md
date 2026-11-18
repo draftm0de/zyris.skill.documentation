@@ -1,50 +1,31 @@
-# Nutzung
+# Usage
 
 **Deutsch** | [English](../en/usage.md)
 
-[Start](../../README.md) · [Übersicht](README.md) · [Installation](installation.md) · [Nutzung](usage.md) · [Screens](screens.md) · [FAQ](faq.md)
+<img src="../assets/zyris-icon.png" alt="ZYRIS" width="48">
+
+[Start](../../README.md) · [Übersicht](README.md)
 
 ## Einrichten
 
-Die Sprache wird pro Zielrepository festgelegt: nur Deutsch, nur Englisch oder beide. `docs/documentation.json` speichert unter `documentation` beispielsweise `{"languages":["en"],"default_language":"en"}`. Nur Englisch erzeugt `README.md` und `docs/en/`; Deutsch und Sprachwechsel-Links sind dann nicht erforderlich. Fehlt eine klare Auswahl, fragt der Agent zuerst nach. Bestehende Inhalte werden beim Sprachwechsel nicht automatisch gelöscht.
-
-Gib den lokalen Skill- oder Repository-Pfad an. Bei mehreren Skills wird eine Auswahl benötigt. Ohne lokalen Dateizugriff stelle ein bereinigtes Quellarchiv bereit. Ein Pfad auf deinem Rechner wird dadurch nicht automatisch in einer Cloud-Sitzung verfügbar.
+Gib einen zugänglichen Quellordner an. Sprache und Zielordner werden pro Repository geklärt; `docs/documentation.json` speichert nur Quellenzeiger, Sprache und Exportkonfiguration. Ohne lokalen Dateizugriff muss eine bereinigte Quellkopie bereitgestellt werden.
 
 ## Ablauf auswählen
 
-In Codex wähle das installierte Plugin oder fordere es namentlich an: „Nutze ZYRIS Skill Manager und prüfe dieses Repository mit verify.“ Die Aktions-Skills für init, update und verify sind im Plugin enthalten; Claude-Slash-Kommandos werden nicht für Codex vorausgesetzt.
-
-In Claude:
-
-```text
-/zyris-skill-manager:verify ../mein-plugin
-/zyris-skill-manager:update ../mein-plugin
-/zyris-skill-manager:init ../mein-skill ../neues-plugin
-```
-
-In ChatGPT: „Prüfe mit ZYRIS Skill Manager die Struktur dieses Plugins.“ oder „Aktualisiere seine Dokumentation auf Deutsch und Englisch.“
+Wähle init, update, verify, export oder publish. In Claude Code beispielsweise `/zyris-skill-manager:init QUELLE ZIEL`. In Codex/GPT wählst du die passende Fähigkeit oder beschreibst die Aktion. Die Claude-Slash-Oberfläche wird nicht für jeden Host vorausgesetzt.
 
 ## Ausgabe verstehen
 
-Der Strukturbericht unterscheidet Fehler, Warnungen und manuelle Prüfungen. `production_ready: null` bedeutet ausdrücklich: nicht nachgewiesen. `init` erzeugt zunächst Vorlagen; der Agent muss sie anschließend anhand der Quellen ausfüllen.
+Init erzeugt eine separate Kopie unter `skills/`, ein versionsloses Manifest, beide Marketplace-Dateien, das Claude-Manifest und Entwicklungs-/Dokumentationsvorlagen. Fehlende Repository-URL und Herausgeberangaben müssen geklärt werden. Vorlagen allein sind noch keine fertige Produktdokumentation. Verify unterscheidet Fehler, Warnungen und manuell offene Prüfungen; `production_ready: null` ist keine Freigabe.
 
 ## Sitzung steuern
 
-Bei Widersprüchen fragt der Agent nach. Du kannst den Umfang begrenzen oder abbrechen. Änderungen erfolgen in einzelnen Dateien; ein Abbruch garantiert kein automatisches Rollback. Prüfe den Git-Diff.
+Beschränke den Auftrag auf gewünschte Dateien oder Aktionen. Init überschreibt keine bestehenden Projekte. Bei vorhandenen Projekten werden Änderungen gezielt vorgenommen; prüfe anschließend den Diff. Ein Abbruch macht bereits erfolgte Änderungen nicht automatisch rückgängig.
 
 ## Später fortsetzen
 
-Starte `update` erneut. `docs/documentation.json` kann den kanonischen Skill und zusätzliche Quellen verorten. Fakten, Versionen und Funktionen werden darin nicht gespeichert; sie werden neu aus den Quellen gelesen.
+Update liest aktuelle Quellen erneut. Publish kann mit einem privaten Journal fortgesetzt werden, nachdem tatsächlicher GitHub-Stand und ursprüngliche Freigabe überprüft wurden. Alte Release-Journals benötigen einen neuen Plan.
 
 ## Spezialisierte Abläufe
 
-[**publish: Veröffentlichung vorbereiten und freigeben**](publish.md). Version und Commit-Message werden vor Commit/Push/PR/Merge vorgeschlagen und ausdrücklich bestätigt. Tag, Release und Katalog folgen im selben genehmigten Ablauf.
-
-
-Die Aktion `export` prüft oder baut ein Website-Paket aus vorhandenen Quellen. In Claude: `/zyris-skill-manager:export REPOSITORY`. In Codex oder ChatGPT fordere den Dokumentationsexport beim Plugin an. Ein Export veröffentlicht nichts und formuliert die Inhalte nicht neu.
-
-`init` akzeptiert nur ein separates, leeres Ziel; `.git`, `.idea` und `.DS_Store` dürfen vorhanden sein. Bestehende Projekte werden zuerst geprüft und nur gezielt verändert. Die vorhandene Quelle wird nicht verschoben. Das neue Projekt erhält eine eigenständige Kopie, keine automatische Synchronisierung.
-
----
-
-Dokumentation erstellt mit ZYRIS Skill Manager. Die Urheberschaft des beschriebenen Produkts bleibt unverändert.
+[Publish](publish.md) schlägt die Commit-Nachricht vor und führt nur nach Freigabe Commit → Push → PR → Prüfungen → Merge aus. Keine Versionsfreigabe, Tags oder Releases. Export baut dagegen ein ZIP für die Website aus vorhandenem Markdown; dieses ZIP ist kein Installationspaket.

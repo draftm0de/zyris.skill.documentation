@@ -28,12 +28,4 @@ Weitere gelieferte Bilder belegen **Einstellungen → Anpassungen → Plugins �
 
 ## Aufnahmecheckliste
 
-Nur fiktive oder freigegebene Inhalte aufnehmen. Keine Zugangsdaten, persönlichen Pfade oder privaten Tabs zeigen. Beschriftete Illustrationen getrennt unter `docs/assets/de/` und `docs/assets/en/` ablegen; Inhalt und Aussage müssen übereinstimmen.
-
----
-
-Dokumentation erstellt mit ZYRIS Skill Manager. Die Urheberschaft des beschriebenen Produkts bleibt unverändert.
-
-### Offene Installationsaufnahmen (18.11.2026)
-
-Für Claude Desktop ist der Menüpfad bis zum Repository-Dialog durch Nutzeraufnahmen belegt. Offen bleiben eingegebene freigegebene Katalogadresse, erfolgreiche Synchronisierung, Produktauswahl, Installation, erster Start und Update. Für Codex und ChatGPT fehlen weiterhin die Installationsaufnahmen. Neue Aufnahmen nur mit fiktiven Daten in einem isolierten Profil; unter `docs/assets/de/` mit Oberfläche, OS, Version, Datum, Herkunft, Alt-Text und Bildunterschrift ablegen.
+Der Nutzer hat den Import in Claude und GPT am 18.11.2026 bestätigt. Die vorhandenen Bilder dokumentieren weiterhin nur die Dialoge; Erfolgsbilder, erster Funktionslauf und Update-Aufnahmen fehlen. Neue Aufnahmen nur mit freigegebenen, fiktiven Daten erstellen. Herkunft, Datum, Oberfläche und sichtbare App-Version festhalten. Eine Nutzerbestätigung ist kein Screenshot.

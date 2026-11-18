@@ -12,7 +12,9 @@
 
 ## Install
 
-<!-- Use an approved published catalog address, otherwise label the preview. Describe visible steps, permissions and success checks. Distinguish Claude UI, Claude Code, Codex Desktop/CLI and ChatGPT evidence. -->
+<!-- Use the verified product repository URL as its marketplace; resolve a missing URL before publication. No separate release or catalog repository is required. Describe visible steps, permissions and success checks. Distinguish Claude UI, Claude Code, Codex Desktop/CLI and ChatGPT evidence. -->
+
+<!-- Repository import: show the actual URL, root catalog files, supported host UI and account limits. No separate release/catalog prerequisite. -->
 
 {{CONTENT_02}}
 

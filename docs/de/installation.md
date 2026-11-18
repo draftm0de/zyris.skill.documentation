@@ -1,84 +1,67 @@
-# Installation und Updates
+# Installation
 
 **Deutsch** | [English](../en/installation.md)
 
-[Start](../../README.md) · [Übersicht](README.md) · [Installation](installation.md) · [Nutzung](usage.md) · [Screens](screens.md) · [FAQ](faq.md)
+<img src="../assets/zyris-icon.png" alt="ZYRIS" width="48">
+
+[Start](../../README.md) · [Übersicht](README.md)
 
 ## Plattform auswählen
 
-**Vorschau, geprüft am 18.11.2026. Noch kein öffentlicher ZYRIS-Katalog und kein freigegebenes Release.** Die endgültige Katalogadresse fehlt bis zur Veröffentlichung. Verwende nicht die Quellrepository-Adresse als Katalog. Ein Marketplace ist ein Plugin-Katalog.
-
-| Oberfläche | Voraussetzungen und Prüfstatus |
-|---|---|
-| Claude Web / Desktop (Chat, Cowork) | Bezahlter Claude-Zugang; Organisation muss den Katalog erlauben. Deutscher Desktop-Menüpfad bis zum Repository-Dialog durch Nutzer-Screenshots belegt; Installation offen. Web im unterstützten Browser; Desktop auf macOS/Windows separat prüfen. |
-| Claude Code | Eingerichteter Claude-Code-Zugang. Lokale CLI: 2.1.319 auf macOS. CLI-Test ist keine Desktop-Abnahme. |
-| Codex Desktop | Konto mit Plugin-Zugang und erlaubtem Katalog. Menüpfad zum Hinzufügen eines Katalogs vom Nutzer mitgeteilt; Installation noch offen. Organisationsrichtlinien können Installation verhindern. |
-| Codex CLI | Lokale Version 0.165.0 auf macOS; isolierter Installationstest, siehe Entwicklungsseite. Andere Betriebssysteme nicht nativ geprüft. |
-| ChatGPT | Eigenständige Oberfläche und Kontofreigaben. Kein Ersatz für Codex; Upload dieses Pakets bleibt separat abzunehmen. |
-
-Du brauchst für den vorgesehenen Katalogweg keinen Quellcheckout, Python oder Make. Es wird kein bestimmter Tarif für Codex versprochen, solange der konkrete Account nicht geprüft ist.
+Claude Desktop und Codex/GPT unterstützen den Repository-Import. Der Nutzer hat beide Importe am 18.11.2026 bestätigt. Zugang, Repository-Berechtigungen und Organisationsrichtlinien gelten weiterhin. Die folgenden Menüpunkte beruhen auf den bereitgestellten Screenshots beziehungsweise Nutzerangaben; ChatGPT-Web-Administration ist ein eigener Weg.
 
 ## Installieren
 
 ### Claude: grafischer Weg
 
-**Claude Desktop auf macOS, deutsche Oberfläche.**
-
 1. Öffne **Einstellungen**.
-2. Scrolle links zum Abschnitt **Anpassungen** und wähle **Plugins**.
-3. Klicke **+ Hinzufügen → Marketplace hinzufügen**.
+2. Scrolle zu **Anpassungen** und wähle **Plugins**.
+3. Wähle **+ Hinzufügen → Marketplace hinzufügen**.
 4. Wähle **Aus einem Repository hinzufügen**.
-5. Gib unter **URL** die veröffentlichte Katalogadresse ein beziehungsweise wähle sie über **Repository auswählen**. Unterstütztes Format: GitHub `owner/repo` oder eine Git-Repository-URL.
-6. Klicke auf **Synchronisieren**.
-
-[Offizielle Claude-Hilfe zur Einrichtung von Plugins](https://support.claude.com/en/articles/13837440-use-plugins-in-claude) · [Screenshots und Prüfstand](screens.md#echte-screenshots).
+5. Gib `https://github.com/draftm0de/zyris.skill.manager` unter **URL** ein und klicke **Synchronisieren**.
+6. Wähle den Manager im Marketplace und installiere ihn.
 
 ### Claude Code
 
-Nach Veröffentlichung in einer Claude-Code-Sitzung zunächst `/plugin marketplace add` gefolgt von der freigegebenen Katalogadresse eingeben. Danach `/plugin install zyris-skill-manager@zyris` öffnen, Umfang und Inhalt prüfen und die Installation bestätigen. Der Platzhalter ist absichtlich kein ausführbarer Installationsbefehl. [Offizielle Anleitung](https://code.claude.com/docs/en/discover-plugins).
-
-Ein bestimmter Katalogstand lässt sich in Claude Code mit `#TAG` auswählen. Offizielles Syntaxbeispiel (keine ZYRIS-Adresse):
-
 ```text
-/plugin marketplace add https://gitlab.example.com/your-group/your-marketplace.git#v1.0.0
+/plugin marketplace add https://github.com/draftm0de/zyris.skill.manager
+/plugin install zyris-skill-manager@zyris-manager
 ```
-
-Der Tag muss im **Katalogrepository** existieren und dort einen installierbaren Katalog enthalten. Er ist nicht automatisch die Plugin-Version. Ein fest gewählter Tag folgt nicht dem neuesten Katalogstand. [Offizielle Quellenformate](https://code.claude.com/docs/en/discover-plugins#add-a-marketplace).
 
 ### Codex Desktop
 
-1. Öffne das **User Icon**.
-2. Wähle **Settings**.
-3. Öffne **Integration → Plugins**.
-4. Klicke **+ Add → A Marketplace**.
-5. Verwende die veröffentlichte Katalogadresse im folgenden Dialog.
+Nutzer-Icon → **Settings → Integration > Plugins → + Add > A Marketplace**. Füge dieselbe Repository-URL hinzu und installiere **ZYRIS Skill Manager**.
 
-Menüpfad vom Nutzer am 18.11.2026 mitgeteilt; der folgende Eingabedialog und die Installation unseres Katalogs sind noch zu prüfen. Eine CLI-Einrichtung ist damit nicht mehr der Standardweg dieser Anleitung.
+CLI-Alternative:
 
-[Offizielle OpenAI-Dokumentation zu Plugins und Katalogen](https://developers.openai.com/plugins/build/plugins) · [Prüfstand](release-evidence.md).
+```sh
+codex plugin marketplace add https://github.com/draftm0de/zyris.skill.manager
+codex plugin add zyris-skill-manager@zyris-manager
+```
 
-### Berechtigungen
-
-Beide Produkte bündeln Anweisungen und lokale Helfer, keine zusätzliche Anmeldung an einen ZYRIS-Dienst. Erlaube Dateizugriffe nur auf den gewünschten Arbeitsbereich. Recherche benötigt Internetzugang; lokale Helfer benötigen eine passende Python-Laufzeit im Host. Das ist eine Laufzeitvoraussetzung für diese Funktionen, keine manuelle Installationsaufgabe. Fehlt sie, darf dauerhafte Speicherung beziehungsweise Dokumenterzeugung nicht als erfolgreich gelten. Verbundene Dienste und Host-Chatverlauf haben eigene Berechtigungen und Aufbewahrung.
+Für den ChatGPT-Workspace-Import verwendet ein Administrator **Admin → Plugins → Add → Import marketplace**. Repository-URL eintragen, Pfad leer lassen; Branch/Tag/Commit kann leer bleiben, um den Standardbranch zu verwenden. Dieser Admin-Weg ist keine Behauptung identischer Menüs in jeder ChatGPT-Oberfläche. Kein Plugin-ZIP erforderlich.
 
 ## Aktualisieren
 
-Claude Code: Unter `/plugin` den Katalog aktualisieren, anschließend das Plugin aktualisieren; neue Sitzung starten. Alternativ `/plugin marketplace update zyris` und `/plugin update zyris-skill-manager@zyris`. Grafische Claude- und Codex-Update-Schaltflächen sind hier noch nicht nativ geprüft; folge der Plugin-Verwaltung deines Hosts und kontrolliere die angezeigte Version.
+Aktualisiere beziehungsweise synchronisiere den Marketplace und öffne einen neuen Chat. In Claude Code:
 
-Codex CLI: `codex plugin marketplace upgrade zyris`, danach `codex plugin add zyris-skill-manager@zyris`. Das gilt für den späteren Git-Katalog; lokale Testkataloge werden anders bereitgestellt. Prüfe nach dem Update einen neuen Chat und vorhandene private Daten. Sichere diese Daten vor einem Wechsel. Bei Fehlern Plugin deaktivieren und eine korrigierte Version abwarten. Ein Katalog-Rollback garantiert keinen Downgrade bereits installierter Caches.
+```text
+/plugin marketplace update zyris-manager
+/plugin update zyris-skill-manager@zyris-manager
+```
+
+In Codex:
+
+```sh
+codex plugin marketplace upgrade zyris-manager
+```
+
+Die eingecheckten Manifeste enthalten keine Version. Claude Code verwendet dann den Commit als Update-Kennung. Codex aktualisiert beim Git-Marketplace-Upgrade die installierte Kopie; seine angezeigte interne Cache-Version kann trotzdem gleich bleiben. Ein Push allein belegt noch keine Aktualisierung in jedem Desktop-Konto. Ein vollständiger Update-Test ist getrennt vom erfolgreichen Erstimport zu prüfen.
 
 ## Entfernen
 
-Entferne das Plugin in der Plugin-Verwaltung. CLI-Alternative: `codex plugin remove zyris-skill-manager@zyris` beziehungsweise `/plugin uninstall zyris-skill-manager@zyris` in Claude Code. Organisationsweit vorgeschriebene Plugins können gesperrt sein. Das Entfernen des Katalogs ist ein eigener Schritt und ersetzt die Plugin-Deinstallation nicht. Private Trainingsdaten, Dokumente und Projektdateien außerhalb des Plugin-Caches behalten; lösche sie nur separat auf eigenen Wunsch.
+Entferne das Plugin in der Plugin-Verwaltung oder mit `codex plugin remove zyris-skill-manager@zyris-manager` beziehungsweise `/plugin uninstall zyris-skill-manager@zyris-manager` in Claude Code. Projektdateien und private Journals außerhalb des Caches separat behalten. Entferne alte Documentation-Installationen erst nach erfolgreicher Nutzung des Managers.
 
 ## Erste Nutzung prüfen
 
-Öffne einen neuen Chat, wähle das Plugin und sende: **„Document a local skill repository“**. Diese Beispielanfrage stammt aus `plugin.json`; sie ist keine behauptete Modellantwort.
-
-Verwende einen fiktiven Test-Skill in einem freigegebenen Ordner. Bitte zunächst um eine Bestandsaufnahme; prüfe Zielordner und Sprache vor der Dokumentation. Siehe [Nutzung](usage.md).
-
-Fehlt der Katalog, prüfe Adresse, Veröffentlichung und Admin-Freigabe. Fehlt das Plugin nach Installation, öffne einen neuen Chat beziehungsweise starte die App neu. Doppelte Einträge können von einer früheren Entwicklungsinstallation stammen; diese erst nach erfolgreichem Test separat entfernen. [Entwickler- und Release-Anleitung](development.md).
-
-### Umstieg vom Documentation-Plugin
-
-Die neue Plugin-ID ist `zyris-skill-manager`, die alten Installationen heißen `zyris-skill-documentation`. Installiere nach Bereitstellung den Manager, prüfe seine Fähigkeiten und entferne die alte Kopie erst danach separat. Private Dateien und Journals nicht löschen. Die lokale Umbenennung hat weder das GitHub-Repository noch aktive Installationen geändert.
+Öffne einen neuen Chat und bitte mit einem fiktiven Test-Skill um eine Bestandsaufnahme. Prüfe, dass der richtige Quell- und Zielordner verwendet wird. Fehlt das Plugin, kontrolliere Repository-Zugriff, Marketplace und App-Neustart. [Nutzung](usage.md) · [Claude-Hilfe](https://support.claude.com/en/articles/13837440-use-plugins-in-claude) · [OpenAI](https://developers.openai.com/plugins/build/plugins).

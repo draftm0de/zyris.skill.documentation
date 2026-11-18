@@ -10,4 +10,4 @@ In Claude: `/zyris-skill-manager:verify SOURCE_PATH`, with equivalent `:init` an
 
 ## Publish with approval
 
-`/zyris-skill-manager:publish SOURCE` prepares the version, CHANGELOG.md, commit message, PR text, checks and destinations. Only after explicit combined approval does the host execute commit, push, PR, merge, tag, release and catalog promotion. No release Action is required. The bundled journal helper supports resumption and detects changed contents; it does not publish itself. The specified provider workflow currently supports GitHub. [Workflow](skills/zyris-skill-manager/references/publish.md).
+`/zyris-skill-manager:publish SOURCE` prepares the diff, commit message and PR. Approval covers commit, push, PR, checks and merge. No version, tags, releases or catalog promotion. The journal helper performs no publication itself. [Workflow](skills/zyris-skill-manager/references/publish.md).

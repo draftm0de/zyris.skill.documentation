@@ -7,20 +7,23 @@ DRY_RUN ?= 0
 SOURCE ?=
 OUTPUT ?=
 LANGUAGES ?=
+REPOSITORY ?=
+AUTHOR ?=
 DEFAULT_LANGUAGE ?=
 TITLE ?=
 
 .PHONY: help test package install update inspect scaffold validate-docs
 help:
+	@echo 'make sync-plugin / check-plugin     Generate / validate committed repository import metadata'
 	@echo 'make check-docs-export / export-docs  Validate / build the website documentation bundle'
 	@echo 'make install/update TARGET=codex    Native Codex plugin installation/update'
-	@echo 'make verify SOURCE=...             Read-only structure audit; manual release gates remain'
+	@echo 'make verify SOURCE=...             Read-only structure audit; host acceptance remains separate'
 	@echo 'make init-plugin SOURCE=... OUTPUT=...  Scaffold a separate empty plugin repository'
-	@echo 'make package                       Build Claude, ChatGPT and Codex plugin ZIPs + local marketplaces'
+	@echo 'make package                       Optional development ZIPs and local fixtures'
 	@echo 'make install TARGET=claude          Install via native Claude plugin management'
-	@echo 'make update TARGET=claude           Rebuild and update the installed Claude plugin'
-	@echo 'make update TARGET=chatgpt          Rebuild ZIP; print manual upload instructions'
-	@echo 'make install DRY_RUN=1              Build and show native commands without installing'
+	@echo 'make update TARGET=claude           Refresh the remote marketplace and installed plugin'
+	@echo 'make update TARGET=chatgpt          Show repository import instructions'
+	@echo 'make install DRY_RUN=1              Show remote install commands without installing'
 	@echo 'make inspect SOURCE=/path/to/skill  Inspect source without executing it'
 	@echo 'make scaffold SOURCE=... OUTPUT=... Create missing doc templates and copy the icon'
 	@echo 'make validate-docs OUTPUT=...       Validate finished docs; scaffolds intentionally fail'
@@ -44,4 +47,4 @@ verify:
 	$(PYTHON) skills/zyris-skill-manager/scripts/plugin_audit.py verify --source "$(SOURCE)"
 init-plugin:
 	@test -n "$(SOURCE)" -a -n "$(OUTPUT)" || (echo "SOURCE and OUTPUT are required" >&2; exit 2)
-	$(PYTHON) skills/zyris-skill-manager/scripts/plugin_audit.py init --source "$(SOURCE)" --output "$(OUTPUT)" $(if $(LANGUAGES),--languages $(LANGUAGES),) $(if $(DEFAULT_LANGUAGE),--default-language $(DEFAULT_LANGUAGE),)
+	$(PYTHON) skills/zyris-skill-manager/scripts/plugin_audit.py init --source "$(SOURCE)" --output "$(OUTPUT)" $(if $(LANGUAGES),--languages $(LANGUAGES),) $(if $(DEFAULT_LANGUAGE),--default-language $(DEFAULT_LANGUAGE),) $(if $(REPOSITORY),--repository "$(REPOSITORY)",) $(if $(AUTHOR),--author "$(AUTHOR)",)

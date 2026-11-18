@@ -34,7 +34,7 @@
     },
     "io.zyris.distribution": {
       "skillRoot": "skills",
-      "marketplace": "zyris-manager-local",
+      "marketplace": "zyris-manager",
       "files": {
         "README.md": "skills/zyris-skill-manager/templates/package/README.md",
         "README.en.md": "skills/zyris-skill-manager/templates/package/README.en.md",

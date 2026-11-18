@@ -4,58 +4,43 @@
 
 <img src="docs/assets/zyris-icon.png" alt="ZYRIS" width="48">
 
-[Dokumentation](docs/de/README.md) · [Screens](docs/de/screens.md)
-
-Ein Plugin für Struktur, Dokumentation, Prüfung und freigabegesteuerte Veröffentlichung von Skills und Plugins.
-
-**Installationsvorschau:** [Claude](docs/de/installation.md#claude-grafischer-weg) · [Claude Code](docs/de/installation.md#claude-code) · [Codex Desktop](docs/de/installation.md#codex-desktop). Öffentliche Katalogadresse und GUI-Abnahme stehen noch aus.
-
 ## Für wen ist das gedacht?
 
-Für Entwickler und Teams, die Skills als Plugins anbieten und verständliche GitHub-Dokumentation pflegen möchten. Das Plugin analysiert einen zugänglichen Quellordner und fragt bei relevanten Unklarheiten nach.
+Für Entwickler und Teams, die Skills als installierbare Plugins pflegen. Der Manager unterstützt Struktur, Dokumentation, Prüfung, Website-Export und die Veröffentlichung über einen geprüften GitHub-PR.
 
 ## So sieht es aus
 
-Dieses Repository verwendet Deutsch und Englisch mit Deutsch als Standard. Für andere Zielrepositories sind Deutsch, Englisch oder beide frei wählbar. [Ablauf und Screens](docs/de/screens.md) zeigen die Nutzung anhand eines ausdrücklich fiktiven Beispiels. Claude-Desktop-Dialoge sind dokumentiert; vollständige Installations- und Publish-Abnahme bleiben offen.
+Ein Plugin mit sechs Skill-Einstiegspunkten. [Beispiel und echte Claude-Dialoge](docs/de/screens.md) zeigen den Ablauf. Der Nutzer hat den Repository-Import in Claude und GPT am 18.11.2026 bestätigt.
 
 ## Funktionen und Modi
 
-**publish** bereitet Version, Changelog, Commit und PR vor und führt die Veröffentlichung erst nach deiner gebündelten Freigabe aus. [Ablauf und Grenzen](docs/de/publish.md). **export** erzeugt das Website-Dokumentationspaket.
-
-
-**init** erstellt aus einem Skill ein separates Plugin-Grundgerüst. **update** überarbeitet Dokumentation aus aktuellen Quellen. **verify** prüft Struktur und benennt offene Freigabekriterien. Ordnerprüfungen allein bestätigen keine Produktionsreife.
+**init** erzeugt ein separates Plugin-Grundgerüst. **update** pflegt Dokumentation anhand der Quellen. **verify** prüft Struktur und Metadaten. **export** erzeugt das Website-Dokumentationspaket. **publish** schlägt die Commit-Nachricht vor und führt nach Freigabe Commit, Push, PR und Merge aus. [Publish im Detail](docs/de/publish.md).
 
 ## Schnellstart
 
-Öffne die [Installationsanleitung](docs/de/installation.md) und wähle Claude oder Codex. Die öffentliche Katalogadresse ist noch nicht freigegeben; die Anleitung ist eine Vorschau. Nach Installation in einem neuen Chat das Plugin auswählen und die dort genannte erste Anfrage senden. Für diesen Nutzerweg ist kein Quellcheckout erforderlich.
+Füge `https://github.com/draftm0de/zyris.skill.manager` in der Plugin-Verwaltung als Marketplace hinzu und installiere **ZYRIS Skill Manager**. Kein ZIP und kein Tag nötig. [Installationswege](docs/de/installation.md).
 
 ## Nutzung
 
-In Claude: `/zyris-skill-manager:verify ../mein-plugin`. Für Dokumentation: `/zyris-skill-manager:update ../mein-plugin`. In ChatGPT wähle das Plugin und beschreibe die gewünschte Aktion; ein lokaler Ordner muss dem Host zugänglich sein.
+Wähle das Plugin und sage: „Prüfe dieses Repository mit verify.“ Für Dokumentation: „Aktualisiere die Dokumentation auf Deutsch und Englisch.“ In Claude Code sind auch `/zyris-skill-manager:verify PFAD` und die weiteren Aktionskommandos verfügbar. [Nutzung](docs/de/usage.md).
 
 ## Speicherung und Datenschutz
 
-Das Plugin schreibt Markdown, öffentliche Dokumentationsmedien und optional einen Quellenzeiger. Es benötigt keinen eigenen Server. Quelltexte, die du einem KI-Host bereitstellst, unterliegen dessen Verarbeitung. Private Laufzeitdaten und Zugangsdaten gehören nicht in die Dokumentation.
+Der Manager schreibt Dokumentationsdateien und bei init eine separate Quellkopie. Publish-Journals liegen außerhalb von Quelle und Plugin-Installation. Private Daten, Zugangsdaten und fremde Änderungen werden nicht übernommen. Der KI-Host verarbeitet die bereitgestellten Quellen nach seinen Bedingungen.
 
 ## Projektstatus
 
-MVP mit deterministischen Tests, drei Plugin-Paketformaten und Strukturprüfung. Native Installation, Aktualisierung und inhaltliche Journeys in beiden Hosts bleiben separate Abnahmen. Eine Veröffentlichung oder vollständige Produktionsfreigabe wird nicht behauptet. Lizenz: [MIT](LICENSE).
+Repository-Import in Claude und GPT vom Nutzer bestätigt. CLI-Import wurde zusätzlich isoliert getestet. Das bestätigt weder sämtliche Funktionen noch automatische Updates oder den vollständigen Publish-Ablauf. Lizenz: [MIT](LICENSE). [Prüfstand](docs/de/release-evidence.md).
 
 ## Entwicklung
 
-Website-Export aus denselben Quellen: `make check-docs-export` und `make export-docs`. Details stehen in der [Entwicklungsdokumentation](docs/de/development.md).
-
 ```sh
+make sync-plugin
+make check-plugin
 make test
-make package
+make verify SOURCE=.
 make validate-docs OUTPUT=.
-make update TARGET=claude
+make check-docs-export
 ```
 
-`make update` aktualisiert das installierte Dokumentationsplugin. Die Plugin-Aktion `update` aktualisiert dagegen die Dokumentation eines Zielprojekts. [Entwicklung](docs/de/development.md) erklärt Quellen und Paketierung.
-
----
-
-Dokumentation erstellt mit ZYRIS Skill Manager. Die Urheberschaft des beschriebenen Produkts bleibt unverändert.
-
-Lokale Umbenennung: `zyris.skill.documentation` → `zyris.skill.manager`; Plugin-ID: `zyris-skill-manager`. Das GitHub-Repository bleibt bis zur gesondert freigegebenen Remote-Umbenennung unter seiner bisherigen Adresse. Bestehende Installationen werden nicht automatisch geändert.
+`make sync-plugin` erzeugt die einzucheckenden Host-Metadaten. `make update TARGET=codex` aktualisiert die installierte Remote-Kopie; die Skill-Aktion **update** pflegt dagegen Dokumentation. [Entwicklung](docs/de/development.md).

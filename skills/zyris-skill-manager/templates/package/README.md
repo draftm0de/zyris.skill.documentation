@@ -10,4 +10,4 @@ In Claude: `/zyris-skill-manager:verify QUELLPFAD`, entsprechend `:init` oder `:
 
 ## Veröffentlichen mit Freigabe
 
-`/zyris-skill-manager:publish QUELLPFAD` bereitet Version, CHANGELOG.md, Commit-Message, PR-Text, Prüfungen und Ziele vor. Erst nach ausdrücklicher gemeinsamer Freigabe führt der Host Commit, Push, PR, Merge, Tag, Release und Katalogübernahme aus. Keine Release-Action erforderlich. Der gebündelte Journalhelfer unterstützt Wiederaufnahme und prüft geänderte Inhalte; er veröffentlicht selbst nichts. Aktuell ist der konkrete Provider-Ablauf GitHub. [Workflow](skills/zyris-skill-manager/references/publish.md).
+`/zyris-skill-manager:publish QUELLPFAD` bereitet Diff, Commit-Nachricht und PR vor. Nach Freigabe folgen Commit, Push, PR, Prüfungen und Merge. Keine Version, Tags, Releases oder Katalogpromotion. Der Journalhelfer veröffentlicht selbst nichts. [Workflow](skills/zyris-skill-manager/references/publish.md).

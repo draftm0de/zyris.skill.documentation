@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build and manage local plugin distributions. Never publish or upload implicitly."""
+"""Validate repository imports and manage host installation; optional development archives. Never publish implicitly."""
 import argparse
 import hashlib
 import json
@@ -42,8 +42,8 @@ def configuration(root=None):
     name = manifest.get('name')
     if not isinstance(name, str) or not re.fullmatch(r'[a-z0-9]+(?:-[a-z0-9]+)*', name):
         raise ValueError('Plugin name must be lowercase kebab-case')
-    version = manifest.get('version', '')
-    if not isinstance(version, str) or not re.fullmatch(r'(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)', version):
+    version = manifest.get('version')
+    if version is not None and (not isinstance(version, str) or not re.fullmatch(r'(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)', version)):
         raise ValueError('plugin.json version must be a numeric major.minor.patch base version')
     if not isinstance(manifest.get('description'), str) or not manifest['description']:
         raise ValueError('Plugin description is required')
@@ -56,7 +56,7 @@ def configuration(root=None):
     source = source_path(root, skill_root)
     if not source.is_dir() or not list(source.glob('*/SKILL.md')):
         raise ValueError('skillRoot must contain canonical skill folders')
-    market = config.get('marketplace', name + '-local')
+    market = config.get('marketplace', name + '-marketplace')
     if not isinstance(market, str) or not re.fullmatch(r'[a-z0-9]+(?:-[a-z0-9]+)*', market):
         raise ValueError('Invalid marketplace name')
     extra = config.get('files', {})
@@ -77,7 +77,49 @@ def configuration(root=None):
     return manifest, source, market, extra
 
 
-def payload(release_version=None):
+def repository_files(manifest=None):
+    """Derive committed host metadata from the portable identity; no version pins."""
+    manifest = manifest or configuration()[0]
+    if 'version' in manifest:
+        raise ValueError('Repository distribution follows commits; remove version from plugin.json')
+    name = manifest['name']
+    config = manifest.get('extensions', {}).get(CONFIG_KEY, {})
+    market = config.get('marketplace', name + '-marketplace')
+    interface = manifest.get('extensions', {}).get('com.openai', {}).get('interface', {})
+    claude = {key: manifest[key] for key in ('name', 'description', 'author', 'homepage', 'repository', 'license', 'keywords') if key in manifest}
+    owner = manifest.get('author', {'name': name})
+    return {
+        '.claude-plugin/plugin.json': claude,
+        '.claude-plugin/marketplace.json': {
+            'name': market, 'owner': owner,
+            'metadata': {'description': manifest['description']},
+            'plugins': [{'name': name, 'source': './', 'description': manifest['description']}]},
+        '.agents/plugins/marketplace.json': {
+            'name': market, 'interface': {'displayName': interface.get('displayName', name)},
+            'plugins': [{'name': name, 'source': {'source': 'local', 'path': './'},
+                         'policy': {'installation': 'AVAILABLE', 'authentication': 'ON_INSTALL'},
+                         'category': interface.get('category', 'Productivity')}]}}
+
+
+def repository_metadata(check=False):
+    expected = repository_files()
+    targets = {relative: source_path(ROOT, relative) for relative in expected}
+    drift = []
+    for relative, data in expected.items():
+        path = targets[relative]
+        if not path.is_file() or json.loads(read_file(path)) != data:
+            drift.append(relative)
+    if check and drift:
+        raise ValueError('Repository metadata missing or stale: ' + ', '.join(drift) + '; run make sync-plugin')
+    if not check:
+        for relative in drift:
+            path = targets[relative]
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text(json.dumps(expected[relative], ensure_ascii=False, indent=2) + '\n')
+    return {'valid': True, 'files': list(expected), 'updated': [] if check else drift}
+
+
+def payload():
     manifest, skill_root, market, extra = configuration()
     # Host metadata is derived from the portable manifest; no duplicate version source.
     claude = {key: manifest[key] for key in ('name', 'version', 'description', 'author', 'homepage', 'repository', 'license', 'keywords') if key in manifest}
@@ -128,9 +170,9 @@ def payload(release_version=None):
     fingerprint = hashlib.sha256(json.dumps(manifest, sort_keys=True).encode())
     for name, content in sorted({**files, **commands}.items()):
         fingerprint.update(name.encode() + b'\0' + content + b'\0')
-    version = release_version or manifest['version'] + '-dev.h' + fingerprint.hexdigest()[:12]
-    if release_version and not re.fullmatch(re.escape(manifest['version']) + r'(?:-(?:rc|beta|alpha)\.(?:0|[1-9]\d*))?', release_version):
-        raise ValueError('Release version must match manifest base version (optional alpha/beta/rc.N)')
+    # Optional legacy ZIP builds retain a content-derived cache identifier.
+    # Direct repository imports use the unversioned manifests checked into Git.
+    version = '0.0.0-dev.h' + fingerprint.hexdigest()[:12]
     manifest['version'] = claude['version'] = version
     # Local build configuration is not a runtime host extension.
     if 'extensions' in manifest:
@@ -248,28 +290,27 @@ def install(target, update=False, dry_run=False):
     if target not in ('claude', 'chatgpt', 'codex'):
         raise ValueError('Unsupported plugin host')
     manifest, _, market, _ = configuration()
-    name = manifest['name']
-    artifacts = build()
+    repository_metadata(check=True)
+    repository = manifest.get('repository')
+    if not isinstance(repository, str) or not repository.startswith('https://github.com/'):
+        raise ValueError('Set the verified GitHub repository URL in plugin.json before installation')
+    selector = manifest['name'] + '@' + market
     if target == 'chatgpt':
-        return {'artifacts': artifacts, 'installed': False,
-                'next': 'Manually upload the ChatGPT plugin ZIP, or Upload new version in plugin administration. Required account/workspace permissions apply. No upload was performed.'}
-    if target == 'codex':
-        # Re-register the local source and install the content-derived version.
-        # No uninstall and no Git marketplace upgrade are needed for local sources.
-        commands = [['codex', 'plugin', 'marketplace', 'add', artifacts['codex_marketplace'], '--json'],
-                    ['codex', 'plugin', 'add', name + '@' + market, '--json']]
-    elif update:
-        commands = [['claude', 'plugin', 'marketplace', 'update', market],
-                    ['claude', 'plugin', 'update', name + '@' + market, '--scope', 'user']]
+        return {'installed': False, 'repository': repository,
+                'next': 'Manually add this repository as a marketplace in the plugin settings, then select the plugin. No ZIP upload is required. Account/workspace access applies.'}
+    if update:
+        commands = ([['codex', 'plugin', 'marketplace', 'upgrade', market, '--json']] if target == 'codex' else
+                    [['claude', 'plugin', 'marketplace', 'update', market], ['claude', 'plugin', 'update', selector]])
     else:
-        commands = [['claude', 'plugin', 'install', name, '--marketplace', artifacts['claude_marketplace'], '--scope', 'user']]
+        commands = [[target, 'plugin', 'marketplace', 'add', repository],
+                    [target, 'plugin', 'add' if target == 'codex' else 'install', selector]]
     if not dry_run:
         if not shutil.which(target):
-            raise ValueError(f'{target} CLI not found. Packages were built; install a CLI with native plugin support before running this target.')
+            raise ValueError(f'{target} CLI not found; use the supported graphical repository import instead')
         for command in commands:
             subprocess.run(command, check=True)
-    return {'artifacts': artifacts, 'commands': commands, 'executed': not dry_run,
-            'next': ('Open a new Codex chat, or restart Codex if the plugin is not visible. The local marketplace must remain available for updates.' if target == 'codex' else 'Restart Claude Code. For updates, install this local marketplace once first.')}
+    return {'repository': repository, 'commands': commands, 'executed': not dry_run,
+            'next': 'Open a new chat after installation or update. This uses the remote repository, not uncommitted checkout edits.'}
 
 
 def main(argv=None):
@@ -282,9 +323,10 @@ def main(argv=None):
         action.add_argument('--target', choices=('claude', 'chatgpt', 'codex'), default='claude')
         action.add_argument('--dry-run', action='store_true')
     check = sub.add_parser('check')
+    sub.add_parser('sync')
     args = parser.parse_args(argv)
     try:
-        result = ({'valid': True, 'name': configuration()[0]['name'], 'version': payload()[0]} if args.command == 'check' else build(args.output) if args.command == 'build' else install(args.target, args.command == 'update', args.dry_run))
+        result = (repository_metadata(check=True) if args.command == 'check' else repository_metadata() if args.command == 'sync' else build(args.output) if args.command == 'build' else install(args.target, args.command == 'update', args.dry_run))
         print(json.dumps(result, indent=2))
         return 0
     except (OSError, ValueError, KeyError, subprocess.CalledProcessError) as exc:
