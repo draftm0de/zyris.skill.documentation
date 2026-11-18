@@ -20,6 +20,8 @@ Exclude private CVs, state, credentials and unrelated work from documentation. J
 
 ## Troubleshooting
 
+**Does `/plugin …` only open settings?** This behavior was observed in the Claude Desktop Code tab. Use the [graphical installation path](installation.md) there. Terminal slash commands do not establish that a desktop installation was performed.
+
 For metadata drift run `make sync-plugin` and review the diff. For a missing update refresh the marketplace and open a new chat. An internal Codex label of 1.0.0 does not mean you must maintain a release version.
 
 ## Validation limits

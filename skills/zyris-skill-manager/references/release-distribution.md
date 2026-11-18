@@ -9,3 +9,9 @@ The user confirmed successful Claude and GPT imports of the Manager repository o
 Use actual repository URLs in installation guides. Describe Claude Desktop's reported German path: Einstellungen → Anpassungen / Plugins → + Hinzufügen → Marketplace hinzufügen → Aus einem Repository hinzufügen → URL → Synchronisieren. Codex's reported path: user icon → Settings → Integration > Plugins → + Add > A Marketplace. Label host/account constraints; don't invent an identical UI for ChatGPT web. A private repository needs supported account access.
 
 Sources: https://code.claude.com/docs/en/plugins/loading ; https://support.claude.com/en/articles/13837440-use-plugins-in-claude ; https://developers.openai.com/plugins/build/plugins ; https://learn.chatgpt.com/docs/enterprise/plugin-management . Consult current official docs for changed host claims. Plugin archives are optional developer tests. Website export ZIPs are a separate documentation format.
+
+## Claude Desktop versus terminal commands
+
+For Claude Desktop, including its Code tab, document the graphical marketplace flow. Label `/plugin marketplace add` and `/plugin install` examples as Claude Code terminal-session alternatives, never as guaranteed Desktop Code tab installation commands. In the terminal session, `/plugin install` opens details for scope selection and confirmation. A redirect to Settings > Plugins is not proof of registration or installation.
+
+On Desktop 5.11492.5 the user observed that both slash commands opened settings without completing the requested action, while manual UI installation succeeded. This supports a surface-specific limitation; the exact internal command handling was not proven. JSON indentation is not a remedy. Apply the same UI/terminal distinction to update and removal instructions. Source: https://code.claude.com/docs/en/desktop#feature-comparison and https://code.claude.com/docs/en/discover-plugins#install-a-plugin .

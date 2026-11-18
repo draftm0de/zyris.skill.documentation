@@ -20,6 +20,8 @@ Keine privaten CVs, Zustände, Zugangsdaten oder fremden Arbeitsdateien in Dokum
 
 ## Fehlerbehebung
 
+**`/plugin …` öffnet nur die Einstellungen?** Im Claude-Desktop-Code-Reiter wurde genau dieses Verhalten beobachtet. Verwende dort den [grafischen Installationsweg](installation.md). Die Terminal-Slash-Befehle sind nicht gleichbedeutend mit einer ausgeführten Desktop-Installation.
+
 Bei Metadaten-Drift `make sync-plugin` ausführen und den Diff prüfen. Bei fehlendem Update den Marketplace aktualisieren und einen neuen Chat öffnen. Eine interne Codex-Anzeige 1.0.0 bedeutet nicht, dass du eine Release-Version pflegen musst.
 
 ## Grenzen der Prüfung

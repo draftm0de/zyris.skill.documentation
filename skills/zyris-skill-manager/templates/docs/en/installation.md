@@ -16,6 +16,10 @@
 
 <!-- Repository import: show the actual URL, root catalog files, supported host UI and account limits. No separate release/catalog prerequisite. -->
 
+<!-- Claude Desktop including the Code tab: document the UI path. Label /plugin marketplace add and /plugin install as alternatives for a Claude Code terminal session only; install opens plugin details with scope selection there. Do not treat a desktop redirect to settings as successful installation. Distinguish UI updates and removal from terminal commands as well. -->
+
+<!-- Use the same heading level (###) and numbered steps for every installation variant. Give CLI alternatives and workspace admin import their own variants. Indent code blocks inside a step with three spaces; use blank lines around lists and code blocks. Keep the same order and structure in German and English while preserving actual UI labels. -->
+
 {{CONTENT_02}}
 
 ## Update
