@@ -8,6 +8,10 @@
 
 Der [Hauptworkflow](../../skills/zyris-skill-documentation/SKILL.md) und seine Referenzen definieren das Verhalten. Die dünnen Aktions-Skills verweisen darauf. `plugin.json` enthält die Basisversion; der Build leitet die Host-Manifeste ab. Dokumentation und kopiertes Logo sind abgeleitete Ausgaben.
 
+Die gemeinsame Quellstruktur verwendet für alle Hosts `skills/<name>/` im Plugin-Projektroot. `init` erzeugt sie; `verify` beanstandet abweichende konfigurierte Wurzeln, Host-lokale Skill-Quellen und Host-Manifeste im Quellroot. Alte Strukturen bleiben für Analyse und ausdrückliche Migration erkennbar, sind aber kein alternativer Standard. Ein Plugin kann mehrere Fähigkeiten ohne getrennte Installationen enthalten.
+
+Gemeinsame Ablageregeln: `.tmp/` entsteht erst für lokale Arbeitsdateien oder Diagnoseausgaben; `dist/` enthält erzeugte Pakete. `.DS_Store`, `.idea/`, Caches, Bytecode und Abhängigkeitsumgebungen werden ignoriert. Projektspezifische Ignore-Regeln und Diagnosen bleiben erhalten. Entwicklungswerkzeuge liegen in Root-`scripts/`, Laufzeit-Scripts beim jeweiligen Skill. Lokale Python-Imports sollen keinen Bytecode erzeugen; entpackte Pakete werden unabhängig vom Checkout getestet. Verify des Dokumentationsplugins prüft wirksame Ignore-Regeln, versionierte Ausgabedateien und statisch Python-Syntax/Imports im Paket; es führt keinen Zielcode aus und ersetzt keine Host-Abnahme.
+
 ## Prüfungen
 
 `ZYRIS_TEST_CODEX_NATIVE=1 make test` aktiviert zusätzlich einen echten Codex-CLI-Test in einem isolierten temporären Profil: Installation, erneute Installation und Update nach einer Inhaltsänderung. Das persönliche Codex-Profil bleibt dabei unberührt.

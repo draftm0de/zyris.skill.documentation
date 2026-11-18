@@ -69,6 +69,9 @@ def configuration(root=None):
             raise ValueError('Unsafe or reserved distribution destination')
         if isinstance(origin, str) and (any(part.startswith('.env') for part in Path(origin).parts) or Path(origin).suffix in ('.pem', '.key')):
             raise ValueError('Private distribution source forbidden')
+        for mapped in (destination, origin):
+            if isinstance(mapped, str) and (set(Path(mapped).parts) & {'.tmp', 'dist', '.idea', '.venv', 'node_modules', '__pycache__', '.DS_Store'} or Path(mapped).suffix in ('.pyc', '.pyo', '.pyd')):
+                raise ValueError('Generated/local files cannot be distributed: ' + mapped)
         if not source_path(root, origin).is_file():
             raise ValueError('Distribution source file missing: ' + str(origin))
     return manifest, source, market, extra
@@ -90,7 +93,7 @@ def payload():
                 raise ValueError(f'Symlink in distributable source: {relative}')
             if any(part.startswith('.env') for part in relative.parts) or path.suffix in ('.key', '.pem'):
                 raise ValueError(f'Private file in distributable source: {relative}')
-            if any(part.startswith('.') or part in ('__pycache__','node_modules','dist') for part in relative.parts) or path.suffix == '.pyc':
+            if any(part.startswith('.') or part in ('__pycache__','node_modules','dist') for part in relative.parts) or path.suffix in ('.pyc', '.pyo', '.pyd'):
                 continue
             if path.is_file():
                 files[str(Path(destination) / relative)] = read_file(path)

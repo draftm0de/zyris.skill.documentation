@@ -40,6 +40,22 @@ class SharedInstallerTests(unittest.TestCase):
     def invoke(self, *args):
         return subprocess.run(args,cwd=self.root,capture_output=True,text=True,check=True)
 
+    def test_extra_file_mapping_cannot_ship_local_outputs_or_bytecode(self):
+        for relative in ('.tmp/report.txt', 'dist/old.zip', '.idea/workspace.xml',
+                         '__pycache__/module.pyc', 'module.pyo', 'module.pyd', '.DS_Store'):
+            with self.subTest(relative=relative):
+                source = self.root / relative
+                source.parent.mkdir(parents=True, exist_ok=True)
+                source.write_text('Fictional local output')
+                self.manifest['extensions']['io.zyris.distribution']['files'] = {'assets/leak.txt': relative}
+                self.write_manifest()
+                with self.assertRaisesRegex(ValueError, 'Generated/local'):
+                    engine.configuration(self.root)
+        self.manifest['extensions']['io.zyris.distribution']['files'] = {'dist/leak.txt': 'plugin.json'}
+        self.write_manifest()
+        with self.assertRaisesRegex(ValueError, 'Generated/local'):
+            engine.configuration(self.root)
+
     def test_arbitrary_manifest_drives_both_wrappers_and_update(self):
         first=json.loads(self.invoke('bash','install.sh','install','--target','claude','--dry-run').stdout)
         second=self.invoke('make','-s','install','TARGET=claude','DRY_RUN=1')

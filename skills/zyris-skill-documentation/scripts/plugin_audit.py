@@ -6,8 +6,10 @@ import json
 from pathlib import Path
 import re
 import sys
+sys.dont_write_bytecode = True
 
 from documentation import SKILL, inspect, scaffold, icon_source, validate
+from repository_policy import hygiene, python_payload
 
 UNSAFE = {'.env', '.git', '.tmp', '.DS_Store', '__pycache__', 'node_modules', 'dist'}
 
@@ -48,6 +50,26 @@ def audit(root):
         versions = {value.get('version') for value in manifests if value.get('version')}
         add('identity', 'pass' if len(names) == 1 else 'fail', 'Plugin manifest names must agree')
         add('version', 'pass' if len(versions) == 1 else 'fail', 'One unambiguous declared version is required; generated manifests may derive it')
+    # Inspect legacy layouts, but never certify them as the common source layout.
+    layout_issues = []
+    portable = root / 'plugin.json'
+    if portable.is_file():
+        try:
+            config = json.loads(portable.read_text()).get('extensions', {}).get('io.zyris.distribution', {})
+            if config.get('skillRoot', 'skills') != 'skills':
+                layout_issues.append('skillRoot must be skills')
+        except (ValueError, AttributeError):
+            layout_issues.append('Cannot resolve neutral skillRoot from plugin.json')
+    else:
+        layout_issues.append('Root plugin.json is required')
+    for folder in ('.claude/skills', '.agents/skills'):
+        if (root / folder).exists():
+            layout_issues.append('Migrate host-local source ' + folder + ' to skills/')
+    for relative in ('.claude-plugin/plugin.json', '.codex-plugin/plugin.json'):
+        if (root / relative).exists():
+            layout_issues.append('Generate host manifest only in artifacts: ' + relative)
+    add('neutral_source_layout', 'fail' if layout_issues else 'pass',
+        '; '.join(layout_issues) if layout_issues else 'Host-neutral skills/ source; host manifests are generated artifacts')
     skills = candidates(root)
     add('skills', 'pass' if skills else 'fail', 'At least one canonical skill with SKILL.md is required')
     duplicates = [name for name, paths in skills.items() if len(paths) > 1]
@@ -82,7 +104,11 @@ def audit(root):
         engine = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(engine)
         engine.ROOT = root
-        engine.payload()  # In-memory validation only; no target code execution or filesystem writes.
+        _, portable, _ = engine.payload()  # In-memory only; never execute target code.
+        py_errors, py_warnings = python_payload(portable)
+        add('python_payload', 'fail' if py_errors else ('warning' if py_warnings else 'pass'),
+            '; '.join(py_errors + py_warnings) if py_errors or py_warnings else
+            'Packaged Python syntax and static imports checked; dynamic dependencies and host execution still require tests')
         add('installer:manifest', 'pass', 'Distribution configuration and payload resolve from plugin.json')
     except (OSError, ValueError, KeyError, TypeError, AttributeError) as exc:
         add('installer:manifest', 'fail', str(exc))
@@ -90,9 +116,12 @@ def audit(root):
         ('build', (root / 'Makefile').is_file() and (root / 'scripts').is_dir(), 'Build entry point and development scripts'),
         ('tests', any((root / 'tests').rglob('test_*.py')), 'Deterministic test files; existence does not prove coverage or passing execution'),
         ('ci', any((root / '.github/workflows').glob('*.yml')), 'CI workflow; not proof of a successful remote run'),
-        ('ignore', (root / '.gitignore').is_file(), 'Ignore rules; content still requires review'),
         ('license', any((root / name).is_file() for name in ('LICENSE','LICENSE.md','LICENSE.txt')), 'Explicit licensing decision; do not invent terms')):
         add(label, 'pass' if present else 'warning', message)
+    hygiene_errors, hygiene_warnings = hygiene(root)
+    add('repository_hygiene', 'fail' if hygiene_errors else ('warning' if hygiene_warnings else 'pass'),
+        '; '.join(hygiene_errors + hygiene_warnings) if hygiene_errors or hygiene_warnings else
+        'Required ignore rules effective; no tracked local/generated files detected')
     try:
         errors = validate(root)
         add('documentation', 'warning' if errors else 'pass', '; '.join(errors) if errors else 'Configured languages, structure, links and brand icon checked')
@@ -114,6 +143,7 @@ def audit(root):
         add('documentation_export_contract', 'fail', str(exc))
     manual = [
         'Run appropriate tests and inspect their actual output; audit does not execute target code.',
+        'Test Python entry points from extracted packages outside the checkout; verify dynamic imports, dependencies, supported Python and filesystem ownership.',
         'Build and validate each artifact in its real host; test install, update, permissions and uninstall.',
         'Verify product behavior, storage/privacy boundaries and unsupported claims.',
         'Review distribution/licensing decisions and required publisher metadata.',
@@ -162,10 +192,11 @@ def initialize(source, output, languages=None, default_language=None):
     for path in template_root.rglob('*'):
         if path.is_file():
             relative = str(path.relative_to(template_root))
+            if relative == 'gitignore.txt':
+                relative = '.gitignore'
             if relative == 'ci.yml':
                 relative = '.github/workflows/validate.yml'
             files[relative] = path.read_bytes()
-    files['.gitignore'] = b'.DS_Store\n.idea/\n.tmp/\ndist/\n__pycache__/\n*.pyc\n'
     # Preflight every destination; init never replaces any pre-existing file.
     for relative in files:
         target = output / relative

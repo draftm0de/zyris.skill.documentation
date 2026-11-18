@@ -1,5 +1,6 @@
 include docs.mk
 include plugin.mk
+export PYTHONDONTWRITEBYTECODE := 1
 .PHONY: help test
 help:
 	@echo 'make check-docs-export / export-docs  Validate / build the website documentation bundle'

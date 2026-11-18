@@ -8,6 +8,10 @@
 
 The [main workflow](../../skills/zyris-skill-documentation/SKILL.md) and its references define behavior. Thin action skills delegate to it. `plugin.json` holds the base version; the build derives host manifests. Documentation and its copied logo are derived output.
 
+The common source layout uses `skills/<name>/` at the plugin project root for every host. `init` creates it; `verify` rejects different configured roots, host-local skill sources and source-level host manifests. Older layouts remain discoverable for inspection and explicit migration, not as an alternative standard. A plugin can bundle several capabilities without separate installations.
+
+Shared hygiene: `.tmp/` is created only when local scratch work or diagnostic output needs it; `dist/` contains generated packages. `.DS_Store`, `.idea/`, caches, bytecode and dependency environments are ignored. Preserve project-specific ignore rules and diagnostic evidence. Development scripts belong in root `scripts/`; runtime scripts belong with their skill. Use bytecode suppression for local Python imports and test extracted packages independently of the checkout. Documentation-plugin verify checks effective ignore rules, tracked generated files and static packaged-Python syntax/imports; it does not run target code or prove host acceptance.
+
 ## Checks
 
 `ZYRIS_TEST_CODEX_NATIVE=1 make test` additionally runs the real Codex CLI in an isolated temporary profile: installation, reinstallation and an update after content changes. This test does not modify the personal Codex profile.

@@ -112,6 +112,38 @@ class AuditTests(unittest.TestCase):
         report=audit.audit(self.output)
         self.assertEqual('pass',next(c['status'] for c in report['checks'] if c['id']=='documentation'))
 
+    def test_verify_rejects_host_sources_and_custom_roots_without_writes(self):
+        audit.initialize(self.source, self.output, languages=['en'])
+        manifest_path = self.output / 'plugin.json'
+        for location in ('.claude/skills', '.agents/skills', 'custom/skills'):
+            with self.subTest(location=location):
+                destination = self.output / location
+                destination.parent.mkdir(parents=True, exist_ok=True)
+                (self.output / 'skills').rename(destination)
+                manifest = json.loads(manifest_path.read_text())
+                manifest['extensions']['io.zyris.distribution']['skillRoot'] = location
+                manifest_path.write_text(json.dumps(manifest))
+                before = {str(p): p.read_bytes() for p in self.output.rglob('*') if p.is_file()}
+                report = audit.audit(self.output)
+                self.assertEqual('fail', next(c['status'] for c in report['checks'] if c['id'] == 'neutral_source_layout'))
+                self.assertEqual(before, {str(p): p.read_bytes() for p in self.output.rglob('*') if p.is_file()})
+                destination.rename(self.output / 'skills')
+
+    def test_init_has_neutral_sources_and_verify_rejects_source_host_manifests(self):
+        audit.initialize(self.source, self.output, languages=['en'])
+        self.assertTrue((self.output / 'skills/fictional-example/SKILL.md').is_file())
+        self.assertFalse((self.output / '.claude').exists())
+        report = audit.audit(self.output)
+        self.assertEqual('pass', next(c['status'] for c in report['checks'] if c['id'] == 'neutral_source_layout'))
+        for relative in ('.claude-plugin/plugin.json', '.codex-plugin/plugin.json'):
+            with self.subTest(relative=relative):
+                path = self.output / relative
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_bytes((self.output / 'plugin.json').read_bytes())
+                report = audit.audit(self.output)
+                self.assertEqual('fail', next(c['status'] for c in report['checks'] if c['id'] == 'neutral_source_layout'))
+                path.unlink()
+
     def test_malformed_manifest_is_reported(self):
         self.output.mkdir()
         (self.output / 'plugin.json').write_text(json.dumps({'name': [], 'description':'example'}))

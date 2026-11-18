@@ -9,6 +9,7 @@ import json
 from pathlib import Path
 import re
 import sys
+sys.dont_write_bytecode = True
 from urllib.parse import unquote, urlsplit
 
 SKILL = Path(__file__).resolve().parents[1]
