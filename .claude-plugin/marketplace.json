@@ -1,17 +1,17 @@
 {
-  "name": "zyris-manager",
-  "owner": {
-    "name": "Peter Fux",
-    "url": "https://draftmode.io"
-  },
-  "metadata": {
-    "description": "Manage skill plugins: structure, documentation, validation and approval-gated publication."
-  },
-  "plugins": [
-    {
-      "name": "zyris-skill-manager",
-      "source": "./",
-      "description": "Manage skill plugins: structure, documentation, validation and approval-gated publication."
-    }
-  ]
+"name": "zyris-manager",
+"owner": {
+"name": "Peter Fux",
+"url": "https://draftmode.io"
+},
+"metadata": {
+"description": "Manage skill plugins: structure, documentation, validation and approval-gated publication."
+},
+"plugins": [
+{
+"name": "zyris-skill-manager",
+"source": "./",
+"description": "Manage skill plugins: structure, documentation, validation and approval-gated publication."
+}
+]
 }
