@@ -1,0 +1,114 @@
+{
+  "README.md": [
+    "Für wen ist das gedacht?",
+    "So sieht es aus",
+    "Funktionen und Modi",
+    "Schnellstart",
+    "Nutzung",
+    "Speicherung und Datenschutz",
+    "Projektstatus",
+    "Entwicklung"
+  ],
+  "docs/de/README.md": [
+    "Anleitungen",
+    "Quellen und Referenzen"
+  ],
+  "docs/de/installation.md": [
+    "Plattform auswählen",
+    "Installieren",
+    "Aktualisieren",
+    "Entfernen",
+    "Erste Nutzung prüfen"
+  ],
+  "docs/de/usage.md": [
+    "Einrichten",
+    "Ablauf auswählen",
+    "Ausgabe verstehen",
+    "Sitzung steuern",
+    "Später fortsetzen",
+    "Spezialisierte Abläufe"
+  ],
+  "docs/de/screens.md": [
+    "Vorschau",
+    "Beispielablauf",
+    "Echte Screenshots",
+    "Aufnahmecheckliste"
+  ],
+  "docs/de/faq.md": [
+    "Produkt und Zugang",
+    "Voraussetzungen",
+    "Datenschutz und Speicherung",
+    "Fehlerbehebung",
+    "Grenzen der Prüfung"
+  ],
+  "docs/de/storage.md": [
+    "Speichermodell",
+    "Einrichtung und Konfiguration",
+    "Speichern und fortsetzen",
+    "Fehler und Wiederherstellung",
+    "Einschränkungen"
+  ],
+  "docs/de/development.md": [
+    "Kanonische Quelle",
+    "Prüfungen",
+    "Paketierung",
+    "CI und Releases",
+    "Dokumentation pflegen"
+  ],
+  "README.en.md": [
+    "Who it is for",
+    "What it looks like",
+    "Capabilities and modes",
+    "Quick start",
+    "Usage",
+    "Storage and privacy",
+    "Project status",
+    "Development"
+  ],
+  "docs/en/README.md": [
+    "Guides",
+    "Source references"
+  ],
+  "docs/en/installation.md": [
+    "Choose your platform",
+    "Install",
+    "Update",
+    "Remove",
+    "Verify first use"
+  ],
+  "docs/en/usage.md": [
+    "Set up",
+    "Choose a workflow",
+    "Understand the output",
+    "Control the session",
+    "Return later",
+    "Specialized workflows"
+  ],
+  "docs/en/screens.md": [
+    "Preview",
+    "Example walkthrough",
+    "Native screenshots",
+    "Capture checklist"
+  ],
+  "docs/en/faq.md": [
+    "Product and access",
+    "Requirements",
+    "Privacy and persistence",
+    "Troubleshooting",
+    "Validation limits"
+  ],
+  "docs/en/storage.md": [
+    "Storage model",
+    "Setup and configuration",
+    "Save and resume",
+    "Failures and recovery",
+    "Limitations"
+  ],
+  "docs/en/development.md": [
+    "Source of truth",
+    "Checks",
+    "Packaging",
+    "CI and releases",
+    "Maintain documentation"
+  ]
+}

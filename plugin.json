@@ -1,0 +1,46 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "zyris-skill-documentation",
+  "version": "0.1.0",
+  "description": "Create consistent, evidence-based GitHub documentation for local skills and plugins.",
+  "author": {
+    "name": "Peter Fux",
+    "url": "https://draftmode.io"
+  },
+  "homepage": "https://draftmode.io",
+  "repository": "https://github.com/draftm0de/zyris.skill.documentation",
+  "keywords": [
+    "documentation",
+    "skills",
+    "plugins",
+    "README"
+  ],
+  "extensions": {
+    "com.openai": {
+      "onboardingSkill": "./skills/zyris-skill-documentation/SKILL.md",
+      "interface": {
+        "displayName": "ZYRIS Skill Documentation",
+        "shortDescription": "Document skills consistently",
+        "developerName": "draftmode",
+        "category": "Productivity",
+        "composerIcon": "./assets/icon.png",
+        "logo": "./assets/icon.png",
+        "websiteURL": "https://draftmode.io",
+        "defaultPrompt": [
+          "Document a local skill repository",
+          "Update a skill's README and documentation"
+        ]
+      }
+    },
+    "io.zyris.distribution": {
+      "skillRoot": "skills",
+      "marketplace": "zyris-documentation-local",
+      "files": {
+        "README.md": "skills/zyris-skill-documentation/templates/package/README.md",
+        "README.en.md": "skills/zyris-skill-documentation/templates/package/README.en.md",
+        "skills/zyris-skill-documentation/assets/icon.png": "assets/icon.png"
+      }
+    }
+  },
+  "license": "MIT"
+}
