@@ -26,4 +26,8 @@ Die Strukturprüfung führt keinen Zielcode aus und ist kein vollständiger Secr
 
 ---
 
-Dokumentation erstellt mit ZYRIS Skill Documentation. Die Urheberschaft des beschriebenen Produkts bleibt unverändert.
+Dokumentation erstellt mit ZYRIS Skill Manager. Die Urheberschaft des beschriebenen Produkts bleibt unverändert.
+
+### Veröffentlicht publish sofort?
+
+Nein. Zuerst werden Änderungen, Version, Changelog, Commit-Message, PR und Ziele vorbereitet und geprüft. Erst deine konkrete Freigabe erlaubt den gesamten beschriebenen Ablauf. Release-Actions sind nicht erforderlich; normale Test-CI bleibt möglich. [Ablauf](publish.md).

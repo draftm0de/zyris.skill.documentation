@@ -126,14 +126,14 @@ class ExportTests(unittest.TestCase):
         self.assertNotEqual(source['content_sha256'],changed['content_sha256'])
 
     def test_packaged_documentation_plugin_can_export_without_checkout(self):
-        if not (ROOT / 'skills/zyris-skill-documentation').exists():
+        if not (ROOT / 'skills/zyris-skill-manager').exists():
             self.skipTest('Documentation plugin package acceptance only')
         package_dir=self.root.parent/'plugin-package'
         subprocess.run([os.sys.executable,str(ROOT/'scripts/plugin.py'),'build','--output',str(package_dir)],check=True,capture_output=True)
         installed=self.root.parent/'installed'
-        with zipfile.ZipFile(package_dir/'zyris-skill-documentation-codex-plugin.zip') as package:
+        with zipfile.ZipFile(package_dir/'zyris-skill-manager-codex-plugin.zip') as package:
             package.extractall(installed)
-        helper=installed/'skills/zyris-skill-documentation/scripts/documentation.py'
+        helper=installed/'skills/zyris-skill-manager/scripts/documentation.py'
         result=subprocess.run([os.sys.executable,str(helper),'export','--source',str(self.root),'--check'],check=True,capture_output=True,text=True)
         self.assertTrue(json.loads(result.stdout)['valid'])
         self.assertFalse((self.root/'dist').exists())

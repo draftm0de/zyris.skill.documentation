@@ -26,4 +26,8 @@ The structure audit does not execute target code and is not a comprehensive secr
 
 ---
 
-Documentation prepared with ZYRIS Skill Documentation. Source-product ownership remains unchanged.
+Documentation prepared with ZYRIS Skill Manager. Source-product ownership remains unchanged.
+
+### Does publish publish immediately?
+
+No. It first prepares and validates changes, version, changelog, commit message, PR and destinations. Only your explicit approval authorizes the stated workflow. Release Actions are not required; ordinary test CI may remain. [Workflow](publish.md).

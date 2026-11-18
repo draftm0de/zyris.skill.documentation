@@ -1,4 +1,4 @@
-# ZYRIS Skill Documentation
+# ZYRIS Skill Manager
 
 **Deutsch** | [English](README.en.md)
 
@@ -6,7 +6,9 @@
 
 [Dokumentation](docs/de/README.md) · [Screens](docs/de/screens.md)
 
-Ein Plugin für konsistente Dokumentation in den pro Repository gewählten Sprachen und nachvollziehbare Strukturprüfungen von Skills und Plugins.
+Ein Plugin für Struktur, Dokumentation, Prüfung und freigabegesteuerte Veröffentlichung von Skills und Plugins.
+
+**Installationsvorschau:** [Claude](docs/de/installation.md#claude-grafischer-weg) · [Claude Code](docs/de/installation.md#claude-code) · [Codex Desktop](docs/de/installation.md#codex-desktop). Öffentliche Katalogadresse und GUI-Abnahme stehen noch aus.
 
 ## Für wen ist das gedacht?
 
@@ -14,27 +16,22 @@ Für Entwickler und Teams, die Skills als Plugins anbieten und verständliche Gi
 
 ## So sieht es aus
 
-Dieses Repository verwendet Deutsch und Englisch mit Deutsch als Standard. Für andere Zielrepositories sind Deutsch, Englisch oder beide frei wählbar. [Ablauf und Screens](docs/de/screens.md) zeigen die Nutzung anhand eines ausdrücklich fiktiven Beispiels. Echte Host-Screenshots stehen noch aus.
+Dieses Repository verwendet Deutsch und Englisch mit Deutsch als Standard. Für andere Zielrepositories sind Deutsch, Englisch oder beide frei wählbar. [Ablauf und Screens](docs/de/screens.md) zeigen die Nutzung anhand eines ausdrücklich fiktiven Beispiels. Claude-Desktop-Dialoge sind dokumentiert; vollständige Installations- und Publish-Abnahme bleiben offen.
 
 ## Funktionen und Modi
+
+**publish** bereitet Version, Changelog, Commit und PR vor und führt die Veröffentlichung erst nach deiner gebündelten Freigabe aus. [Ablauf und Grenzen](docs/de/publish.md). **export** erzeugt das Website-Dokumentationspaket.
+
 
 **init** erstellt aus einem Skill ein separates Plugin-Grundgerüst. **update** überarbeitet Dokumentation aus aktuellen Quellen. **verify** prüft Struktur und benennt offene Freigabekriterien. Ordnerprüfungen allein bestätigen keine Produktionsreife.
 
 ## Schnellstart
 
-Voraussetzung: Python 3.10 oder neuer, Make und für native Installation Claude Code.
-
-```sh
-make test
-make package
-make install TARGET=claude
-```
-
-Für ChatGPT wird das Plugin-ZIP manuell hochgeladen. Siehe [Installation](docs/de/installation.md).
+Öffne die [Installationsanleitung](docs/de/installation.md) und wähle Claude oder Codex. Die öffentliche Katalogadresse ist noch nicht freigegeben; die Anleitung ist eine Vorschau. Nach Installation in einem neuen Chat das Plugin auswählen und die dort genannte erste Anfrage senden. Für diesen Nutzerweg ist kein Quellcheckout erforderlich.
 
 ## Nutzung
 
-In Claude: `/zyris-skill-documentation:verify ../mein-plugin`. Für Dokumentation: `/zyris-skill-documentation:update ../mein-plugin`. In ChatGPT wähle das Plugin und beschreibe die gewünschte Aktion; ein lokaler Ordner muss dem Host zugänglich sein.
+In Claude: `/zyris-skill-manager:verify ../mein-plugin`. Für Dokumentation: `/zyris-skill-manager:update ../mein-plugin`. In ChatGPT wähle das Plugin und beschreibe die gewünschte Aktion; ein lokaler Ordner muss dem Host zugänglich sein.
 
 ## Speicherung und Datenschutz
 
@@ -59,4 +56,6 @@ make update TARGET=claude
 
 ---
 
-Dokumentation erstellt mit ZYRIS Skill Documentation. Die Urheberschaft des beschriebenen Produkts bleibt unverändert.
+Dokumentation erstellt mit ZYRIS Skill Manager. Die Urheberschaft des beschriebenen Produkts bleibt unverändert.
+
+Lokale Umbenennung: `zyris.skill.documentation` → `zyris.skill.manager`; Plugin-ID: `zyris-skill-manager`. Das GitHub-Repository bleibt bis zur gesondert freigegebenen Remote-Umbenennung unter seiner bisherigen Adresse. Bestehende Installationen werden nicht automatisch geändert.

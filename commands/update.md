@@ -7,4 +7,4 @@ Re-read canonical sources and refresh documentation in the repository-selected l
 
 Arguments: $ARGUMENTS
 
-Follow the canonical workflow in `${CLAUDE_PLUGIN_ROOT}/skills/zyris-skill-documentation/SKILL.md` relative to this plugin root, especially its action routing and source-of-truth rules. Do not invent verification results.
+Follow the canonical workflow in `${CLAUDE_PLUGIN_ROOT}/skills/zyris-skill-manager/SKILL.md` relative to this plugin root, especially its action routing and source-of-truth rules. Do not invent verification results.

@@ -27,7 +27,7 @@ class PluginTests(unittest.TestCase):
                     self.assertFalse(any('.git/' in name or name.startswith('tests/') for name in names))
                     manifest = json.loads(archive.read(key))
                     self.assertEqual(manifest['version'], result['version'])
-                    prefix = 'skills/zyris-skill-documentation/'
+                    prefix = 'skills/zyris-skill-manager/'
                     for path in ('SKILL.md', 'scripts/documentation.py', 'templates/README.md',
                                  'templates/README.en.md', 'templates/docs/de/screens.md', 'templates/docs/en/screens.md'):
                         self.assertIn(prefix + path, names)
@@ -51,7 +51,7 @@ class PluginTests(unittest.TestCase):
             shutil.copy2(ROOT / 'plugin.json', root / 'plugin.json')
             with patch.object(plugin, 'ROOT', root):
                 before = plugin.payload()[0]
-                with (root / 'skills/zyris-skill-documentation/references/style.md').open('a') as handle:
+                with (root / 'skills/zyris-skill-manager/references/style.md').open('a') as handle:
                     handle.write('\nA revised documentation rule.\n')
                 after = plugin.payload()[0]
                 self.assertNotEqual(before, after)
@@ -62,7 +62,7 @@ class PluginTests(unittest.TestCase):
             result = plugin.build(root / 'build')
             with zipfile.ZipFile(result['chatgpt_zip']) as archive:
                 archive.extractall(root / 'installed')
-            helper = root / 'installed/skills' / 'zyris-skill-documentation' / 'scripts/documentation.py'
+            helper = root / 'installed/skills' / 'zyris-skill-manager' / 'scripts/documentation.py'
             source = root / 'fictional'
             source.mkdir()
             (source / 'SKILL.md').write_text('---\nname: fictional\n---\n# Fictional skill')

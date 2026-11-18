@@ -1,0 +1,17 @@
+{
+  "name": "zyris-skill-manager",
+  "description": "Manage skill plugins: structure, documentation, validation and approval-gated publication.",
+  "author": {
+    "name": "Peter Fux",
+    "url": "https://draftmode.io"
+  },
+  "homepage": "https://draftmode.io",
+  "repository": "https://github.com/draftm0de/zyris.skill.manager",
+  "license": "MIT",
+  "keywords": [
+    "skills",
+    "plugins",
+    "documentation",
+    "publishing"
+  ]
+}

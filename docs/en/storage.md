@@ -26,4 +26,8 @@ No automatic cloud synchronization, persistent chat memory or backup service. Us
 
 ---
 
-Documentation prepared with ZYRIS Skill Documentation. Source-product ownership remains unchanged.
+Documentation prepared with ZYRIS Skill Manager. Source-product ownership remains unchanged.
+
+### Publish journal
+
+The private approval journal lives outside the plugin installation and source repository. It contains selected paths/hashes, proposed messages, the approval reply and publication evidence. Never store tokens; retain it for recovery and delete it only when requested. See [publish](publish.md).

@@ -1,4 +1,4 @@
-name: Validate documentation plugin
+name: Validate skill manager
 on: [push, pull_request, workflow_dispatch]
 permissions:
   contents: read

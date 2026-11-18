@@ -8,12 +8,15 @@
 
 ## Anleitungen
 
+[Veröffentlichung mit publish](publish.md).
+
+
 [Installation](installation.md), [Nutzung](usage.md), [Screens](screens.md), [FAQ](faq.md), [Speicherung](storage.md) und [Entwicklung](development.md).
 
 ## Quellen und Referenzen
 
-Maßgeblich sind der [Workflow](../../skills/zyris-skill-documentation/SKILL.md), die [Quellenregeln](../../skills/zyris-skill-documentation/references/source-of-truth.md) und der [Paketbau](../../scripts/plugin.py). Diese Seiten sind daraus abgeleitete Dokumentation.
+Maßgeblich sind der [Workflow](../../skills/zyris-skill-manager/SKILL.md), die [Quellenregeln](../../skills/zyris-skill-manager/references/source-of-truth.md) und der [Paketbau](../../scripts/plugin.py). Diese Seiten sind daraus abgeleitete Dokumentation.
 
 ---
 
-Dokumentation erstellt mit ZYRIS Skill Documentation. Die Urheberschaft des beschriebenen Produkts bleibt unverändert.
+Dokumentation erstellt mit ZYRIS Skill Manager. Die Urheberschaft des beschriebenen Produkts bleibt unverändert.

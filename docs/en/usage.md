@@ -12,17 +12,17 @@ Provide a local skill or repository path. Multiple skills require a selection. W
 
 ## Choose a workflow
 
-In Codex select the installed plugin or request it by name: “Use ZYRIS Skill Documentation to verify this repository.” The plugin bundles init, update and verify capabilities; Claude slash commands are not assumed to apply to Codex.
+In Codex select the installed plugin or request it by name: “Use ZYRIS Skill Manager to verify this repository.” The plugin bundles init, update and verify capabilities; Claude slash commands are not assumed to apply to Codex.
 
 In Claude:
 
 ```text
-/zyris-skill-documentation:verify ../my-plugin
-/zyris-skill-documentation:update ../my-plugin
-/zyris-skill-documentation:init ../my-skill ../new-plugin
+/zyris-skill-manager:verify ../my-plugin
+/zyris-skill-manager:update ../my-plugin
+/zyris-skill-manager:init ../my-skill ../new-plugin
 ```
 
-In ChatGPT: “Use ZYRIS Skill Documentation to verify this plugin’s structure.” or “Update its German and English documentation.”
+In ChatGPT: “Use ZYRIS Skill Manager to verify this plugin’s structure.” or “Update its German and English documentation.”
 
 ## Understand the output
 
@@ -38,10 +38,13 @@ Run `update` again. `docs/documentation.json` can locate the canonical skill and
 
 ## Specialized workflows
 
-The `export` action validates or builds a website bundle from existing source. In Claude: `/zyris-skill-documentation:export REPOSITORY`. In Codex or ChatGPT request the documentation export from the plugin. Exporting does not publish or rewrite content.
+[**publish: prepare and approve publication**](publish.md). Review the proposed version and commit message before commit/push/PR/merge. Tag, release and catalog promotion follow within the same approved scope.
+
+
+The `export` action validates or builds a website bundle from existing source. In Claude: `/zyris-skill-manager:export REPOSITORY`. In Codex or ChatGPT request the documentation export from the plugin. Exporting does not publish or rewrite content.
 
 `init` requires a separate empty destination; `.git`, `.idea` and `.DS_Store` may exist. Existing projects are audited first and changed deliberately. The original source is not moved. The new project receives an independent copy, not automatic synchronization.
 
 ---
 
-Documentation prepared with ZYRIS Skill Documentation. Source-product ownership remains unchanged.
+Documentation prepared with ZYRIS Skill Manager. Source-product ownership remains unchanged.

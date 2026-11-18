@@ -6,7 +6,7 @@ import tempfile
 import unittest
 
 R = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(R / 'skills/zyris-skill-documentation/scripts'))
+sys.path.insert(0, str(R / 'skills/zyris-skill-manager/scripts'))
 import plugin_audit as audit
 
 

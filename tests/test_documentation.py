@@ -6,7 +6,7 @@ import tempfile
 import unittest
 
 ROOT = Path(__file__).resolve().parents[1]
-SPEC = importlib.util.spec_from_file_location('documentation', ROOT / 'skills/zyris-skill-documentation/scripts/documentation.py')
+SPEC = importlib.util.spec_from_file_location('documentation', ROOT / 'skills/zyris-skill-manager/scripts/documentation.py')
 doc = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(doc)
 

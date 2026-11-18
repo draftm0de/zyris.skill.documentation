@@ -12,17 +12,17 @@ Gib den lokalen Skill- oder Repository-Pfad an. Bei mehreren Skills wird eine Au
 
 ## Ablauf auswählen
 
-In Codex wähle das installierte Plugin oder fordere es namentlich an: „Nutze ZYRIS Skill Documentation und prüfe dieses Repository mit verify.“ Die Aktions-Skills für init, update und verify sind im Plugin enthalten; Claude-Slash-Kommandos werden nicht für Codex vorausgesetzt.
+In Codex wähle das installierte Plugin oder fordere es namentlich an: „Nutze ZYRIS Skill Manager und prüfe dieses Repository mit verify.“ Die Aktions-Skills für init, update und verify sind im Plugin enthalten; Claude-Slash-Kommandos werden nicht für Codex vorausgesetzt.
 
 In Claude:
 
 ```text
-/zyris-skill-documentation:verify ../mein-plugin
-/zyris-skill-documentation:update ../mein-plugin
-/zyris-skill-documentation:init ../mein-skill ../neues-plugin
+/zyris-skill-manager:verify ../mein-plugin
+/zyris-skill-manager:update ../mein-plugin
+/zyris-skill-manager:init ../mein-skill ../neues-plugin
 ```
 
-In ChatGPT: „Prüfe mit ZYRIS Skill Documentation die Struktur dieses Plugins.“ oder „Aktualisiere seine Dokumentation auf Deutsch und Englisch.“
+In ChatGPT: „Prüfe mit ZYRIS Skill Manager die Struktur dieses Plugins.“ oder „Aktualisiere seine Dokumentation auf Deutsch und Englisch.“
 
 ## Ausgabe verstehen
 
@@ -38,10 +38,13 @@ Starte `update` erneut. `docs/documentation.json` kann den kanonischen Skill und
 
 ## Spezialisierte Abläufe
 
-Die Aktion `export` prüft oder baut ein Website-Paket aus vorhandenen Quellen. In Claude: `/zyris-skill-documentation:export REPOSITORY`. In Codex oder ChatGPT fordere den Dokumentationsexport beim Plugin an. Ein Export veröffentlicht nichts und formuliert die Inhalte nicht neu.
+[**publish: Veröffentlichung vorbereiten und freigeben**](publish.md). Version und Commit-Message werden vor Commit/Push/PR/Merge vorgeschlagen und ausdrücklich bestätigt. Tag, Release und Katalog folgen im selben genehmigten Ablauf.
+
+
+Die Aktion `export` prüft oder baut ein Website-Paket aus vorhandenen Quellen. In Claude: `/zyris-skill-manager:export REPOSITORY`. In Codex oder ChatGPT fordere den Dokumentationsexport beim Plugin an. Ein Export veröffentlicht nichts und formuliert die Inhalte nicht neu.
 
 `init` akzeptiert nur ein separates, leeres Ziel; `.git`, `.idea` und `.DS_Store` dürfen vorhanden sein. Bestehende Projekte werden zuerst geprüft und nur gezielt verändert. Die vorhandene Quelle wird nicht verschoben. Das neue Projekt erhält eine eigenständige Kopie, keine automatische Synchronisierung.
 
 ---
 
-Dokumentation erstellt mit ZYRIS Skill Documentation. Die Urheberschaft des beschriebenen Produkts bleibt unverändert.
+Dokumentation erstellt mit ZYRIS Skill Manager. Die Urheberschaft des beschriebenen Produkts bleibt unverändert.

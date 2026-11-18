@@ -26,4 +26,8 @@ Keine automatische Cloud-Synchronisierung, keine dauerhafte Chat-Erinnerung und 
 
 ---
 
-Dokumentation erstellt mit ZYRIS Skill Documentation. Die Urheberschaft des beschriebenen Produkts bleibt unverändert.
+Dokumentation erstellt mit ZYRIS Skill Manager. Die Urheberschaft des beschriebenen Produkts bleibt unverändert.
+
+### Publish journal
+
+Das private Freigabejournal liegt außerhalb der Plugin-Installation und des Quellrepositories. Es enthält ausgewählte Dateipfade/Hashes, Nachrichtenentwürfe, die konkrete Freigabeantwort und Veröffentlichungsnachweise. Keine Tokens speichern; Journal für Wiederaufnahme behalten und erst auf eigenen Wunsch löschen. Siehe [publish](publish.md).

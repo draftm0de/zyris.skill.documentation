@@ -30,18 +30,18 @@ test:
 	$(PYTHON) -m unittest discover -s tests -p 'test_*.py' -v
 inspect:
 	@test -n "$(SOURCE)" || (echo "SOURCE is required" >&2; exit 2)
-	$(PYTHON) skills/zyris-skill-documentation/scripts/documentation.py inspect --source "$(SOURCE)"
+	$(PYTHON) skills/zyris-skill-manager/scripts/documentation.py inspect --source "$(SOURCE)"
 scaffold:
 	@test -n "$(SOURCE)" -a -n "$(OUTPUT)" || (echo "SOURCE and OUTPUT are required" >&2; exit 2)
-	$(PYTHON) skills/zyris-skill-documentation/scripts/documentation.py scaffold --source "$(SOURCE)" --output "$(OUTPUT)" $(if $(TITLE),--title "$(TITLE)",) $(if $(LANGUAGES),--languages $(LANGUAGES),) $(if $(DEFAULT_LANGUAGE),--default-language $(DEFAULT_LANGUAGE),)
+	$(PYTHON) skills/zyris-skill-manager/scripts/documentation.py scaffold --source "$(SOURCE)" --output "$(OUTPUT)" $(if $(TITLE),--title "$(TITLE)",) $(if $(LANGUAGES),--languages $(LANGUAGES),) $(if $(DEFAULT_LANGUAGE),--default-language $(DEFAULT_LANGUAGE),)
 validate-docs:
 	@test -n "$(OUTPUT)" || (echo "OUTPUT is required" >&2; exit 2)
-	$(PYTHON) skills/zyris-skill-documentation/scripts/documentation.py validate --output "$(OUTPUT)"
+	$(PYTHON) skills/zyris-skill-manager/scripts/documentation.py validate --output "$(OUTPUT)"
 
 .PHONY: verify init-plugin
 verify:
 	@test -n "$(SOURCE)" || (echo "SOURCE is required" >&2; exit 2)
-	$(PYTHON) skills/zyris-skill-documentation/scripts/plugin_audit.py verify --source "$(SOURCE)"
+	$(PYTHON) skills/zyris-skill-manager/scripts/plugin_audit.py verify --source "$(SOURCE)"
 init-plugin:
 	@test -n "$(SOURCE)" -a -n "$(OUTPUT)" || (echo "SOURCE and OUTPUT are required" >&2; exit 2)
-	$(PYTHON) skills/zyris-skill-documentation/scripts/plugin_audit.py init --source "$(SOURCE)" --output "$(OUTPUT)" $(if $(LANGUAGES),--languages $(LANGUAGES),) $(if $(DEFAULT_LANGUAGE),--default-language $(DEFAULT_LANGUAGE),)
+	$(PYTHON) skills/zyris-skill-manager/scripts/plugin_audit.py init --source "$(SOURCE)" --output "$(OUTPUT)" $(if $(LANGUAGES),--languages $(LANGUAGES),) $(if $(DEFAULT_LANGUAGE),--default-language $(DEFAULT_LANGUAGE),)
